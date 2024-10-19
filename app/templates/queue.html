@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h3>Queue Operations</h3>
+    
+    <!-- Form to Enqueue an Item -->
+    <form method="POST">
+        <label for="enqueue_item">Enqueue Item:</label>
+        <input type="text" name="enqueue_item" id="enqueue_item" class="form-control">
+        <button type="submit" class="btn btn-primary mt-2">Enqueue</button>
+    </form>
+
+    <!-- Display Current Queue -->
+    <h4 class="mt-4">Current Queue</h4>
+    <ul class="list-group mt-3">
+        {% for item in queue %}
+        <li class="list-group-item">{{ item }}</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Form to Dequeue an Item -->
+    <form method="POST" action="/queue/dequeue">
+        <button type="submit" class="btn btn-danger mt-3">Dequeue</button>
+    </form>
+</div>
+{% endblock %}

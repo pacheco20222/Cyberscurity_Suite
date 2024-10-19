@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cybersecurity Suite</title>
+    <!-- Include the CSS from the template -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='lib/chart/chart.css') }}">
+</head>
+
+<body>
+    <div class="container-xxl position-relative d-flex p-0">
+        <!-- Sidebar Start -->
+        <div class="sidebar pe-4 pb-3">
+            <nav class="navbar bg-secondary navbar-dark">
+                <a href="/" class="navbar-brand mx-4 mb-3">
+                    <h3 class="text-primary">Cybersecurity<br>Suite</h3>
+                </a>
+                <div class="navbar-nav w-100">
+                    <a href="{{ url_for('main.array') }}" class="nav-item nav-link">Arrays</a>
+                    <a href="{{ url_for('main.stack') }}" class="nav-item nav-link">Stacks</a>
+                    <a href="{{ url_for('main.queue') }}" class="nav-item nav-link">Queues</a>
+                    <a href="{{ url_for('main.hash_table') }}" class="nav-item nav-link">Hash Table</a>
+                    <a href="{{ url_for('main.binary_tree') }}" class="nav-item nav-link">Binary Tree</a>
+                    <a href="{{ url_for('main.graph') }}" class="nav-item nav-link">Graph</a>
+                    <a href="{{ url_for('main.linked_list') }}" class="nav-item nav-link">Circular Linked List</a>
+                    <a href="{{ url_for('main.sorting') }}" class="nav-item nav-link">Sorting</a>
+                </div>
+            </nav>
+        </div>
+        <!-- Sidebar End -->
+
+        <!-- Content Start -->
+        <div class="content">
+            <div class="container-fluid pt-4 px-4">
+                <div class="row g-4">
+                    {% block content %}
+                    <!-- Main Content for each data structure goes here -->
+                    {% endblock %}
+                </div>
+            </div>
+        </div>
+        <!-- Content End -->
+    </div>
+
+    <!-- Include the JS files from the template -->
+    <script src="{{ url_for('static', filename='js/bootstrap.bundle.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+
+</html>

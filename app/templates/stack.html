@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h3>Stack Operations</h3>
+    
+    <!-- Form to Push an Item -->
+    <form method="POST">
+        <label for="push_item">Push Item:</label>
+        <input type="text" name="push_item" id="push_item" class="form-control">
+        <button type="submit" class="btn btn-primary mt-2">Push</button>
+    </form>
+
+    <!-- Display Current Stack -->
+    <h4 class="mt-4">Current Stack</h4>
+    <ul class="list-group mt-3">
+        {% for item in stack %}
+        <li class="list-group-item">{{ item }}</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Form to Pop an Item -->
+    <form method="POST" action="/stack/pop">
+        <button type="submit" class="btn btn-danger mt-3">Pop</button>
+    </form>
+</div>
+{% endblock %}
