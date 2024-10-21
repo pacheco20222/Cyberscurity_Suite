@@ -1,0 +1,22 @@
+[
+    {
+        "username": "user1",
+        "timestamp": "2024-10-21T10:00:00Z",
+        "status": "success"
+    },
+    {
+        "username": "user2",
+        "timestamp": "2024-10-21T10:05:00Z",
+        "status": "failure"
+    },
+    {
+        "username": "user3",
+        "timestamp": "2024-10-21T10:10:00Z",
+        "status": "failure"
+    },
+    {
+        "username": "user4",
+        "timestamp": "2024-10-21T10:15:00Z",
+        "status": "success"
+    }
+]

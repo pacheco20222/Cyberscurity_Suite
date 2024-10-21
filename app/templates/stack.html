@@ -2,17 +2,17 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h3>Stack Operations</h3>
+    <h3>Stack Operations - Login Attempts</h3>
     
-    <!-- Form to Push an Item -->
+    <!-- Form to Push a Login Attempt -->
     <form method="POST">
-        <label for="push_item">Push Item:</label>
-        <input type="text" name="push_item" id="push_item" class="form-control">
+        <label for="push_item">Push Login Attempt:</label>
+        <input type="text" name="push_item" id="push_item" class="form-control" placeholder="Enter login attempt (username, status(seperate them by commas))">
         <button type="submit" class="btn btn-primary mt-2">Push</button>
     </form>
 
     <!-- Display Current Stack -->
-    <h4 class="mt-4">Current Stack</h4>
+    <h4 class="mt-4">Current Stack (Most Recent Login Attempts)</h4>
     <ul class="list-group mt-3">
         {% for item in stack %}
         <li class="list-group-item">{{ item }}</li>
@@ -20,8 +20,8 @@
     </ul>
 
     <!-- Form to Pop an Item -->
-    <form method="POST" action="/stack/pop">
-        <button type="submit" class="btn btn-danger mt-3">Pop</button>
+    <form method="POST" action="{{ url_for('main.pop_stack') }}">
+        <button type="submit" class="btn btn-danger mt-3">Pop Last Login Attempt</button>
     </form>
 </div>
 {% endblock %}

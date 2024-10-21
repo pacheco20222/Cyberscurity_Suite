@@ -65,21 +65,22 @@ def array():
     
     return render_template('array.html', array=current, message=message)
 
-
 @main.route('/stack', methods=['GET', 'POST'])
 def stack():
     if request.method == 'POST':
-        item = request.form.get('push_item')
-        if item:
-            stack_instance.push(item)
+        push_item = request.form.get('push_item')  # Use the input from the form
+        if push_item:
+            stack_instance.push(push_item)  # Pass the string directly to the stack instance
         return redirect(url_for('main.stack'))
 
     return render_template('stack.html', stack=stack_instance.get_stack())
+
 
 @main.route('/stack/pop', methods=['POST'])
 def pop_stack():
     stack_instance.pop()
     return redirect(url_for('main.stack'))
+
 
 @main.route('/queue', methods=['GET', 'POST'])
 def queue():

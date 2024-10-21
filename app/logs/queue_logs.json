@@ -1,0 +1,47 @@
+[
+    {
+        "ip": "192.168.1.15",
+        "timestamp": "2024-10-21T10:10:00Z",
+        "reason": "blocked IP"
+    },
+    {
+        "ip": "10.0.0.5",
+        "timestamp": "2024-10-21T10:15:00Z",
+        "reason": "multiple failed attempts"
+    },
+    {
+        "ip": "10.0.0.12",
+        "timestamp": "2024-10-21T10:20:00Z",
+        "reason": "unrecognized device"
+    },
+    {
+        "ip": "192.168.1.25",
+        "timestamp": "2024-10-21T10:25:00Z",
+        "reason": "wrong password"
+    },
+    {
+        "ip": "192.168.1.30",
+        "timestamp": "2024-10-21T10:30:00Z",
+        "reason": "account locked"
+    },
+    {
+        "ip": "192.168.1.35",
+        "timestamp": "2024-10-21T10:35:00Z",
+        "reason": "blocked IP"
+    },
+    {
+        "ip": "10.0.0.45",
+        "timestamp": "2024-10-21T10:40:00Z",
+        "reason": "unrecognized device"
+    },
+    {
+        "ip": "10.0.0.50",
+        "timestamp": "2024-10-21T10:45:00Z",
+        "reason": "multiple failed attempts"
+    },
+    {
+        "ip": "10.182.10.1",
+        "timestamp": "2024-10-21T12:31:27.969588",
+        "reason": "Pubkey failed"
+    }
+]
