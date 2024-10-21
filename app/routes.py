@@ -7,8 +7,6 @@ from .models.array import Array
 from .models.binary_tree import BinaryTree
 from .models.circular_double_link_list import CircularDoubleLinkedList
 from .models.graph import Graph
-from .log_reader import read_suricata_logs, read_nginx_logs
-from log_processor import LogProcessor
 
 main = Blueprint('main', __name__)
 hash_table_instance = HashTable()
@@ -23,16 +21,6 @@ graph_instance = Graph()
 @main.route('/')
 def index():
     return render_template('index.html')
-
-@main.route('/logs/suricata')
-def suricata_logs():
-    logs = read_suricata_logs()
-    return render_template('suricata_logs.html', logs=logs)
-
-@main.route('/logs/nginx')
-def nginx_logs():
-    logs = read_nginx_logs()
-    return render_template('nginx_logs.html', logs=logs)
 
 @main.route('/array', methods=['GET', 'POST'])
 def array():
