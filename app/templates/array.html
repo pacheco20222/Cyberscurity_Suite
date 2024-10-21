@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h3>Array Operations</h3>
+    
+    <!-- Form to Select Operation and Input Values -->
+    <form method="POST">
+        <label for="operation">Select Operation:</label>
+        <select name="operation" id="operation" class="form-control">
+            <option value="insert">Insert</option>
+            <option value="delete">Delete</option>
+            <option value="access">Access</option>
+            <option value="update">Update</option>
+        </select>
+
+        <label for="index" class="mt-2">Index:</label>
+        <input type="number" name="index" id="index" class="form-control" required>
+
+        <label for="value" class="mt-2">Value:</label>
+        <input type="text" name="value" id="value" class="form-control">
+
+        <button type="submit" class="btn btn-primary mt-2">Submit</button>
+    </form>
+
+    <!-- Display the Message (Result of Operation) -->
+    {% if message %}
+        <div class="alert alert-info mt-3">{{ message }}</div>
+    {% endif %}
+
+    <!-- Display Current Array -->
+    <h4 class="mt-4">Current Array</h4>
+    <ul class="list-group mt-3">
+        {% for item in array %}
+        <li class="list-group-item">Index {{ loop.index0 }}: {{ item }}</li>
+        {% else %}
+        <li class="list-group-item">Array is empty</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

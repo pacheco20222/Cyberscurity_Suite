@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h3>Binary Tree Operations</h3>
+    <h3>Circular Double Linked List Operations</h3>
     
     <!-- Form to Select Operation and Input Values -->
     <form method="POST">
@@ -10,7 +10,6 @@
         <select name="operation" id="operation" class="form-control">
             <option value="insert">Insert</option>
             <option value="delete">Delete</option>
-            <option value="search">Search</option>
         </select>
 
         <label for="value" class="mt-2">Value:</label>
@@ -24,13 +23,13 @@
         <div class="alert alert-info mt-3">{{ message }}</div>
     {% endif %}
 
-    <!-- Display Current Binary Tree (In-Order Traversal) -->
-    <h4 class="mt-4">Current Binary Tree (In-Order Traversal)</h4>
+    <!-- Display Current List -->
+    <h4 class="mt-4">Current List</h4>
     <ul class="list-group mt-3">
-        {% for item in tree %}
+        {% for item in list %}
         <li class="list-group-item">Node: {{ item }}</li>
         {% else %}
-        <li class="list-group-item">Tree is empty</li>
+        <li class="list-group-item">List is empty</li>
         {% endfor %}
     </ul>
 </div>

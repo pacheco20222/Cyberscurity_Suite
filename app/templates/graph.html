@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h3>Graph Operations</h3>
+    
+    <!-- Form to Add Node and Edge -->
+    <form method="POST">
+        <label for="operation">Select Operation:</label>
+        <select name="operation" id="operation" class="form-control">
+            <option value="add_node">Add Node</option>
+            <option value="add_edge">Add Edge</option>
+        </select>
+
+        <label for="node" class="mt-2">Node:</label>
+        <input type="text" name="node" id="node" class="form-control">
+
+        <label for="node1" class="mt-2">Node 1 (for edge):</label>
+        <input type="text" name="node1" id="node1" class="form-control">
+
+        <label for="node2" class="mt-2">Node 2 (for edge):</label>
+        <input type="text" name="node2" id="node2" class="form-control">
+
+        <button type="submit" class="btn btn-primary mt-2">Submit</button>
+    </form>
+
+    <!-- Display the Message (Result of Operation) -->
+    {% if message %}
+        <div class="alert alert-info mt-3">{{ message }}</div>
+    {% endif %}
+
+    <!-- Display Current Graph -->
+    <h4 class="mt-4">Current Graph (Adjacency List)</h4>
+    <ul class="list-group mt-3">
+        {% for node, neighbors in graph.items() %}
+        <li class="list-group-item">
+            Node: {{ node }} - Neighbors: {{ neighbors | join(", ") }}
+        </li>
+        {% else %}
+        <li class="list-group-item">Graph is empty</li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}
