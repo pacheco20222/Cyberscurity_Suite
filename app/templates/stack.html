@@ -3,11 +3,24 @@
 {% block content %}
 <div class="container mt-5">
     <h3>Stack Operations - Login Attempts</h3>
+
+    <!-- Display Success or Error Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="container mt-3">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
     
     <!-- Form to Push a Login Attempt -->
     <form method="POST">
-        <label for="push_item">Push Login Attempt:</label>
-        <input type="text" name="push_item" id="push_item" class="form-control" placeholder="Enter login attempt (username, status(seperate them by commas))">
+        <label for="push_item">Push Login Attempt (format: username, status):</label>
+        <input type="text" name="push_item" id="push_item" class="form-control" placeholder="Enter login attempt (username, status)">
         <button type="submit" class="btn btn-primary mt-2">Push</button>
     </form>
 
@@ -15,7 +28,9 @@
     <h4 class="mt-4">Current Stack (Most Recent Login Attempts)</h4>
     <ul class="list-group mt-3">
         {% for item in stack %}
-        <li class="list-group-item">{{ item }}</li>
+        <li class="list-group-item">
+            Username: {{ item['username'] }}, Status: {{ item['status'] }}, Timestamp: {{ item['timestamp'] }}
+        </li>
         {% endfor %}
     </ul>
 

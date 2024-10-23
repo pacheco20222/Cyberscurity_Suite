@@ -43,5 +43,20 @@
         "ip": "10.182.10.1",
         "timestamp": "2024-10-21T12:31:27.969588",
         "reason": "Pubkey failed"
+    },
+    {
+        "ip": "10.182.220.1",
+        "timestamp": "2024-10-23T11:23:27.024761",
+        "reason": "Invalid domain"
+    },
+    {
+        "ip": "10.182.12.2",
+        "timestamp": "2024-10-23T11:39:50.483206",
+        "reason": "DNS Failure"
+    },
+    {
+        "ip": "192.155.18.12",
+        "timestamp": "2024-10-23T12:03:26.464184",
+        "reason": "DNS Failure"
     }
 ]

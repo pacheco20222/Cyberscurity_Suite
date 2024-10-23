@@ -2,26 +2,40 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h3>Queue Operations</h3>
+    <h3>Queue Operations - Failed Access Attempts</h3>
+
+    <!-- Display Success or Error Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="container mt-3">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}" role="alert">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
     
     <!-- Form to Enqueue an Item -->
     <form method="POST">
-        <label for="enqueue_item">Enqueue Failed Access Attempt:</label>
-        <!-- Updated placeholder to guide user input -->
-        <input type="text" name="enqueue_item" id="enqueue_item" class="form-control" placeholder="Enter IP (address, reason (comma-separated))">
+        <label for="enqueue_item">Enqueue Item (format: IP, reason):</label>
+        <input type="text" name="enqueue_item" id="enqueue_item" class="form-control" placeholder="Enter IP, reason (separated by a comma)">
         <button type="submit" class="btn btn-primary mt-2">Enqueue</button>
     </form>
 
     <!-- Display Current Queue -->
-    <h4 class="mt-4">Current Queue</h4>
+    <h4 class="mt-4">Current Queue (Failed Access Attempts)</h4>
     <ul class="list-group mt-3">
         {% for item in queue %}
-        <li class="list-group-item">{{ item }}</li>
+        <li class="list-group-item">
+            IP: {{ item['ip'] }}, Reason: {{ item['reason'] }}, Timestamp: {{ item['timestamp'] }}
+        </li>
         {% endfor %}
     </ul>
 
     <!-- Form to Dequeue an Item -->
-    <form method="POST" action="/queue/dequeue">
+    <form method="POST" action="{{ url_for('main.dequeue_queue') }}">
         <button type="submit" class="btn btn-danger mt-3">Dequeue</button>
     </form>
 </div>

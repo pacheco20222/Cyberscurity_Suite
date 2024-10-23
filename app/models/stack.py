@@ -18,15 +18,23 @@ class Stack:
         # Expecting a string in format: "username, status"
         try:
             username, status = item.split(',')
+            username = username.strip()
+            status = status.strip()
+            if not username or not status:
+                print("Invalid input. Username and status cannot be empty.")
+                return False
+
             log_entry = {
-                "username": username.strip(),
-                "status": status.strip(),
+                "username": username,
+                "status": status,
                 "timestamp": datetime.now().isoformat()  # Add current timestamp
             }
             self.stack.append(log_entry)
             self.save_stack()
+            return True  # Return True if input is valid
         except ValueError:
             print("Invalid input. Make sure the input is in the format 'username, status'.")
+            return False  # Return False if input is invalid
 
     def pop(self):
         # Remove the most recent login attempt and save the changes
@@ -34,12 +42,6 @@ class Stack:
             popped_item = self.stack.pop()
             self.save_stack()
             return popped_item
-        return None
-
-    def peek(self):
-        # View the most recent login attempt
-        if not self.is_empty():
-            return self.stack[-1]
         return None
 
     def is_empty(self):

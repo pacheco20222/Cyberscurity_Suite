@@ -7,6 +7,7 @@ from .models.array import Array
 from .models.binary_tree import BinaryTree
 from .models.circular_double_link_list import CircularDoubleLinkedList
 from .models.graph import Graph
+from flask import flash
 
 main = Blueprint('main', __name__)
 hash_table_instance = HashTable()
@@ -65,37 +66,48 @@ def array():
     
     return render_template('array.html', array=current, message=message)
 
-@main.route('/stack', methods=['GET', 'POST'])
-def stack():
-    if request.method == 'POST':
-        push_item = request.form.get('push_item')  # Use the input from the form
-        if push_item:
-            stack_instance.push(push_item)  # Pass the string directly to the stack instance
-        return redirect(url_for('main.stack'))
-
-    return render_template('stack.html', stack=stack_instance.get_stack())
-
-
-@main.route('/stack/pop', methods=['POST'])
-def pop_stack():
-    stack_instance.pop()
-    return redirect(url_for('main.stack'))
-
 
 @main.route('/queue', methods=['GET', 'POST'])
 def queue():
     if request.method == 'POST':
         item = request.form.get('enqueue_item')
         if item:
-            queue_instance.enqueue(item)
+            if queue_instance.enqueue(item):
+                flash('Item successfully added to the queue!', 'success')
+            else:
+                flash('Invalid input. Please ensure the format is IP, reason.', 'danger')
         return redirect(url_for('main.queue'))
 
     return render_template('queue.html', queue=queue_instance.get_queue())
 
 @main.route('/queue/dequeue', methods=['POST'])
 def dequeue_queue():
-    queue_instance.dequeue()
+    if queue_instance.dequeue():
+        flash('Item successfully dequeued from the queue!', 'success')
+    else:
+        flash('Queue is empty. No items to dequeue.', 'danger')
     return redirect(url_for('main.queue'))
+
+@main.route('/stack', methods=['GET', 'POST'])
+def stack():
+    if request.method == 'POST':
+        push_item = request.form.get('push_item')  # Use the input from the form
+        if push_item:
+            if stack_instance.push(push_item):
+                flash('Login attempt successfully added to the stack!', 'success')
+            else:
+                flash('Invalid input. Please ensure the format is username, status.', 'danger')
+        return redirect(url_for('main.stack'))
+
+    return render_template('stack.html', stack=stack_instance.get_stack())
+
+@main.route('/stack/pop', methods=['POST'])
+def pop_stack():
+    if stack_instance.pop():
+        flash('Last login attempt successfully popped from the stack!', 'success')
+    else:
+        flash('Stack is empty. No login attempts to pop.', 'danger')
+    return redirect(url_for('main.stack'))
 
 @main.route('/hash_table', methods=['GET', 'POST'])
 def hash_table():

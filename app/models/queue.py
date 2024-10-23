@@ -1,5 +1,6 @@
 import os
 import json
+import ipaddress
 from datetime import datetime
 
 class Queue:
@@ -12,15 +13,31 @@ class Queue:
         # Expecting a string in format: "IP, reason"
         try:
             ip, reason = item.split(',')
+            ip = ip.strip()
+            reason = reason.strip()
+            
+            # Validate IP address format
+            try:
+                ipaddress.ip_address(ip)
+            except ValueError:
+                print("Invalid IP address format.")
+                return False
+
+            if not ip or not reason:
+                print("Invalid input. IP and reason cannot be empty.")
+                return False
+
             log_entry = {
-                "ip": ip.strip(),
+                "ip": ip,
                 "timestamp": datetime.now().isoformat(),  # Add current timestamp
-                "reason": reason.strip()
+                "reason": reason
             }
             self.queue.append(log_entry)
             self.save_queue()  # Save the queue after adding an item
+            return True
         except ValueError:
-            print("Invalid input. Make sure the input is in the format 'IP, reason'.")
+            print("Invalid input. Make sure the input is in the format 'IP, reason'. Also make sure correct IP format '0.0.0.0'.")
+            return False
 
     def dequeue(self):
         if not self.is_empty():
