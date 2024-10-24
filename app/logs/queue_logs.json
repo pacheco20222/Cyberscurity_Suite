@@ -58,5 +58,10 @@
         "ip": "192.155.18.12",
         "timestamp": "2024-10-23T12:03:26.464184",
         "reason": "DNS Failure"
+    },
+    {
+        "ip": "192.99.99.88",
+        "timestamp": "2024-10-24T01:44:32.589635",
+        "reason": "Failed Password"
     }
 ]

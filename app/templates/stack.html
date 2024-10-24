@@ -1,10 +1,9 @@
 {% extends 'base.html' %}
-
 {% block content %}
 <div class="container mt-5">
-    <h3>Stack Operations - Login Attempts</h3>
+    <h3>Login Attempts stored in a Stack</h3>
 
-    <!-- Display Success or Error Messages -->
+    <!-- Here we will show error with flash using the flash class from the module Flask form pythom-->
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             <div class="container mt-3">
@@ -16,25 +15,25 @@
             </div>
         {% endif %}
     {% endwith %}
-    
-    <!-- Form to Push a Login Attempt -->
+
+    <!-- Now here I am going to set up the push for the Stack-->
     <form method="POST">
-        <label for="push_item">Push Login Attempt (format: username, status):</label>
-        <input type="text" name="push_item" id="push_item" class="form-control" placeholder="Enter login attempt (username, status)">
+        <label for="push_log">Push a Login Attempt follow the format: username, status:</label>
+        <input type="text" name="push_log" id="push_log" class="form-control" placeholder="Enter the login attempt follow this formas: (username, status)">
         <button type="submit" class="btn btn-primary mt-2">Push</button>
     </form>
 
-    <!-- Display Current Stack -->
-    <h4 class="mt-4">Current Stack (Most Recent Login Attempts)</h4>
-    <ul class="list-group mt-3">
-        {% for item in stack %}
+    <!--Now here is where I will display the current stack from the /app/logs/stack_logs.json-->
+    <h4 class="mt-5">Current Stack(With the provided login Attempts by the user):</h4>
+    <ul class="list-group">
+        {% for log in stack %}
         <li class="list-group-item">
-            Username: {{ item['username'] }}, Status: {{ item['status'] }}, Timestamp: {{ item['timestamp'] }}
+            Username: {{ log['username']}}, Status: {{ log['status']}}, Timestamp: {{ log['timestamp'] }}
         </li>
         {% endfor %}
     </ul>
 
-    <!-- Form to Pop an Item -->
+    <!-- This is the form to be able to pop the Item from the stack using stack logic-->
     <form method="POST" action="{{ url_for('main.pop_stack') }}">
         <button type="submit" class="btn btn-danger mt-3">Pop Last Login Attempt</button>
     </form>

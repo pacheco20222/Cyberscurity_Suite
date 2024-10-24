@@ -1,113 +1,104 @@
 from flask import Blueprint, render_template, request, redirect, url_for
-from .models.hash_table import HashTable
+from flask import flash
 from .models.stack import Stack
 from .models.queue import Queue
-from .models.sorting import Sorting
 from .models.array import Array
 from .models.binary_tree import BinaryTree
-from .models.circular_double_link_list import CircularDoubleLinkedList
 from .models.graph import Graph
-from flask import flash
+from .models.hash_table import HashTable
+from .models.sorting import Sorting
+from .models.circular_double_link_list import CircularDoubleLinkedList
 
 main = Blueprint('main', __name__)
-hash_table_instance = HashTable()
-stack_instance = Stack()
-queue_instance = Queue()
-sorting_instance = Sorting()
-array_instance = Array()
+stack_object = Stack()
+queue_object = Queue()
+array_object = Array()
 binary_tree_instance = BinaryTree()
-circular_double_linked_list_instance = CircularDoubleLinkedList()
 graph_instance = Graph()
+hash_table_instance = HashTable()
+sorting_instance = Sorting()
+circular_double_linked_list_instance = CircularDoubleLinkedList()
 
 @main.route('/')
 def index():
     return render_template('index.html')
 
-@main.route('/array', methods=['GET', 'POST'])
-def array():
-    current = array_instance.get_array()
-    message = "Array is empty for now"
-    
+@main.route('/stack', methods=['GET', 'POST'])
+def stack():
     if request.method == 'POST':
-        operation = request.form.get('operation')
+        push_log = request.form.get('push_log')
+        if push_log:
+            if stack_object.push(push_log):
+                flash('Login attempt has successfuly been pushed to the stack', 'success')
+            else:
+                flash('There was a problem pushing the login attempt to the stack, check format (username, status)', 'danger')
+        return redirect(url_for('main.stack'))
+    return render_template('stack.html', stack=stack_object.get_stack())
 
-        if operation == 'insert':
-            index = int(request.form.get('index'))
-            item = request.form.get('value')
-            if array_instance.insert(index, item):
-                message = f"Item {item} inserted at index {index}"
-            else:
-                message = "Invalid index. Please try again."
-        
-        elif operation == 'delete':
-            index = int(request.form.get('index'))
-            if array_instance.delete(index):
-                message = f"Item deleted from index {index}"
-            else:
-                message = "Invalid index. Please try again."
-        
-        elif operation == 'access':
-            index = int(request.form.get('index'))
-            item = array_instance.access(index)
-            if item is not None:
-                message = f"Item at index {index} is {item}"
-            else:
-                message = "Invalid index. Please try again."
-        
-        elif operation == 'update':
-            index = int(request.form.get('index'))
-            item = request.form.get('value')
-            if array_instance.update(index, item):
-                message = f"Item at index {index} updated to {item}"
-            else:
-                message = "Invalid index. Please try again."
-        
-        return redirect(url_for('main.array', message=message))
-    
-    return render_template('array.html', array=current, message=message)
-
+@main.route('/stack/pop', methods=['POST'])
+def pop_stack():
+    if stack_object.pop():
+        flash('Login attempt has been popped from the stack', 'success')
+    else:
+        flash('The stack is already empty, push a login attempt to try and pop', 'danger')
+    return redirect(url_for('main.stack'))
 
 @main.route('/queue', methods=['GET', 'POST'])
 def queue():
     if request.method == 'POST':
-        item = request.form.get('enqueue_item')
-        if item:
-            if queue_instance.enqueue(item):
-                flash('Item successfully added to the queue!', 'success')
+        log = request.form.get('enqueue_log')
+        if log:
+            if queue_object.enqueue(log):
+                flash('Login attempt has successfuly been enqueued', 'success')
             else:
-                flash('Invalid input. Please ensure the format is IP, reason.', 'danger')
+                flash('There was a problem enqueuing the login attempt, check format (username, status)', 'danger')
         return redirect(url_for('main.queue'))
-
-    return render_template('queue.html', queue=queue_instance.get_queue())
+    return render_template('queue.html', queue=queue_object.get_queue())
 
 @main.route('/queue/dequeue', methods=['POST'])
 def dequeue_queue():
-    if queue_instance.dequeue():
-        flash('Item successfully dequeued from the queue!', 'success')
+    if queue_object.dequeue():
+        flash('Login attempt has been dequeued', 'success')
     else:
-        flash('Queue is empty. No items to dequeue.', 'danger')
+        flash('The queue is already empty, enqueue a login attempt to try and dequeue', 'danger')
     return redirect(url_for('main.queue'))
 
-@main.route('/stack', methods=['GET', 'POST'])
-def stack():
+
+@main.route('/array', methods=['GET', 'POST'])
+def array():
+    live_array = array_object.return_array()
     if request.method == 'POST':
-        push_item = request.form.get('push_item')  # Use the input from the form
-        if push_item:
-            if stack_instance.push(push_item):
-                flash('Login attempt successfully added to the stack!', 'success')
+        index = request.form.get('index')
+        operation = request.form.get('operation')
+        
+        if operation == 'insert':
+            element = request.form.get('element')
+            if element and array_object.insert_element(element, index):
+                flash(f"Element {element} has been inserted at index {index}", 'success')
             else:
-                flash('Invalid input. Please ensure the format is username, status.', 'danger')
-        return redirect(url_for('main.stack'))
-
-    return render_template('stack.html', stack=stack_instance.get_stack())
-
-@main.route('/stack/pop', methods=['POST'])
-def pop_stack():
-    if stack_instance.pop():
-        flash('Last login attempt successfully popped from the stack!', 'success')
-    else:
-        flash('Stack is empty. No login attempts to pop.', 'danger')
-    return redirect(url_for('main.stack'))
+                flash('Invalid index', 'danger')
+        
+        elif operation == 'delete':
+            if array_object.delete_element(index):
+                flash(f"Element at index {index} has been deleted", 'success')
+            else:
+                flash('Invalid index', 'danger')
+        
+        elif operation == 'update':
+            element = request.form.get('element')
+            if element and array_object.update_element(element, index):
+                flash(f"Element at index {index} has been updated to {element}", 'success')
+            else:
+                flash('Invalid index', 'danger')
+        
+        elif operation == 'access':
+            element = array_object.access_element(index)
+            if element:
+                flash(f"Element at index {index} is {element}", 'success')
+            else:
+                flash('Invalid index', 'danger')
+        return redirect(url_for('main.array'))
+    return render_template('array.html', array=live_array)
 
 @main.route('/hash_table', methods=['GET', 'POST'])
 def hash_table():
