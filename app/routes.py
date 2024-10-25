@@ -8,6 +8,7 @@ from .models.graph import Graph
 from .models.hash_table import HashTable
 from .models.sorting import Sorting
 from .models.circular_double_link_list import CircularDoubleLinkedList
+from .models.list import LogList
 
 main = Blueprint('main', __name__)
 stack_object = Stack()
