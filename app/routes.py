@@ -7,8 +7,7 @@ from .models.binary_tree import BinaryTree
 from .models.graph import Graph
 from .models.hash_table import HashTable
 from .models.sorting import Sorting
-from .models.circular_double_link_list import CircularDoubleLinkedList
-from .models.list import LogList
+from .models.circular_double_link_list import DoublyLinkedList
 
 main = Blueprint('main', __name__)
 stack_object = Stack()
@@ -18,7 +17,8 @@ binary_tree_instance = BinaryTree()
 graph_instance = Graph()
 hash_table_instance = HashTable()
 sorting_instance = Sorting()
-circular_double_linked_list_instance = CircularDoubleLinkedList()
+live_list = DoublyLinkedList()
+
 
 @main.route('/')
 def index():
@@ -189,27 +189,45 @@ def graph():
 
     return render_template('graph.html', graph=current_graph, message=message)
 
-@main.route('/circular_double_link_list', methods=['GET', 'POST'])
-def circular_double_link_list():
-    current_list = circular_double_linked_list_instance.traverse()
-    message = ""
+@main.route('/linked_list', methods=['GET', 'POST'])
+def log_list():
+    live_list_items = live_list.to_list()  # Changed variable name for clarity
     
     if request.method == 'POST':
+        index = request.form.get('index')
         operation = request.form.get('operation')
 
         if operation == 'insert':
-            value = int(request.form.get('value'))
-            circular_double_linked_list_instance.insert(value)
-            message = f"Inserted {value} into the list."
-        
-        elif operation == 'delete':
-            value = int(request.form.get('value'))
-            deleted = circular_double_linked_list_instance.delete(value)
-            if deleted:
-                message = f"Deleted {value} from the list."
+            log = request.form.get('log')
+            if live_list.insert_at(int(index), log):
+                flash(f"Log Entry '{log}' inserted at index {index}", 'success')
             else:
-                message = f"Value {value} not found in the list."
-        
-        return redirect(url_for('main.circular_double_link_list', message=message))
+                flash('Invalid index', 'danger')
 
-    return render_template('circular_double_link_list.html', list=current_list, message=message)
+        elif operation == 'delete':
+            if live_list.delete_at(int(index)):
+                flash(f"Log Entry at index {index} deleted", 'success')
+            else:
+                flash('Invalid index', 'danger')
+
+        elif operation == 'update':
+            log = request.form.get('log')
+            if live_list.update_at(int(index), log):
+                flash(f"Log Entry at index {index} updated to: {log}", 'success')
+            else:
+                flash('Invalid index', 'danger')
+
+        elif operation == 'access':
+            log = live_list.get_at(int(index))
+            if log:
+                flash(f"Log Entry at index {index} is: {log}", 'success')
+            else:
+                flash('Invalid index', 'danger')
+
+        elif operation == 'clear':
+            live_list.clear()
+            flash('All log entries have been cleared', 'success')
+
+        return redirect(url_for('main.log_list'))
+
+    return render_template('double_link_list.html', logs=live_list_items)
