@@ -1,0 +1,12 @@
+[
+    "User login attempt on WebApp1 (Success)",
+    "Database connection error on MySQL server (Error: Connection timeout)",
+    "File upload on WebApp1 (Success)",
+    "User logout on WebApp1 (Success)",
+    "Failed API request on WebApp2 (Error: Unauthorized)",
+    "Service restart on Apache Server (Info: Restart completed)",
+    "Failed login attempt on Admin Portal (Error: Incorrect password)",
+    "User password change on WebApp1 (Success)",
+    "Data backup completed on Backup Server (Info: Backup successful)",
+    "Disk usage warning on File Server (Warning: Disk space low)"
+]

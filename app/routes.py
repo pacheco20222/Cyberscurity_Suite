@@ -1,13 +1,14 @@
 from flask import Blueprint, render_template, request, redirect, url_for
 from flask import flash
-from .models.stack import Stack
-from .models.queue import Queue
-from .models.array import Array
-from .models.binary_tree import BinaryTree
-from .models.graph import Graph
-from .models.hash_table import HashTable
-from .models.sorting import Sorting
-from .models.circular_double_link_list import DoublyLinkedList
+import subprocess
+import os
+from app.models.stack import Stack
+from app.models.queue import Queue
+from app.models.array import Array
+from app.models.binary_tree import BinaryTree
+from app.models.graph import Graph
+from app.models.quicksort_binary_search import Sorting
+from app.models.double_link_list import DoublyLinkedList
 
 main = Blueprint('main', __name__)
 stack_object = Stack()
@@ -15,7 +16,6 @@ queue_object = Queue()
 array_object = Array()
 binary_tree_instance = BinaryTree()
 graph_instance = Graph()
-hash_table_instance = HashTable()
 sorting_instance = Sorting()
 live_list = DoublyLinkedList()
 
@@ -30,9 +30,9 @@ def stack():
         push_log = request.form.get('push_log')
         if push_log:
             if stack_object.push(push_log):
-                flash('Login attempt has successfuly been pushed to the stack', 'success')
+                flash('Login attempt has successfully been pushed to the stack', 'success')
             else:
-                flash('There was a problem pushing the login attempt to the stack, check format (username, status)', 'danger')
+                flash('There was a problem pushing the login attempt to the stack. Check format (username, status)', 'danger')
         return redirect(url_for('main.stack'))
     return render_template('stack.html', stack=stack_object.get_stack())
 
@@ -41,8 +41,23 @@ def pop_stack():
     if stack_object.pop():
         flash('Login attempt has been popped from the stack', 'success')
     else:
-        flash('The stack is already empty, push a login attempt to try and pop', 'danger')
+        flash('The stack is already empty. Push a login attempt to try and pop', 'danger')
     return redirect(url_for('main.stack'))
+
+@main.route('/stack/regenerate', methods=['POST'])
+def regenerate_stack():
+    try:
+        # Call the Python script to regenerate the file
+        subprocess.run(["python", "app/scripts/script_stack.py"], check=True)
+        
+        # Reload the stack to reflect the regenerated logs immediately
+        stack_object.load_stack()
+        
+        flash("Stack logs have been regenerated.", "success")
+    except subprocess.CalledProcessError as e:
+        flash(f"Failed to regenerate stack logs: {e}", "danger")
+    return redirect(url_for("main.stack"))
+
 
 @main.route('/queue', methods=['GET', 'POST'])
 def queue():
@@ -50,19 +65,70 @@ def queue():
         log = request.form.get('enqueue_log')
         if log:
             if queue_object.enqueue(log):
-                flash('Login attempt has successfuly been enqueued', 'success')
+                flash('Access attempt has successfully been enqueued.', 'success')
             else:
-                flash('There was a problem enqueuing the login attempt, check format (username, status)', 'danger')
+                flash('There was a problem enqueuing the access attempt. Please check the format (IP, reason).', 'danger')
         return redirect(url_for('main.queue'))
     return render_template('queue.html', queue=queue_object.get_queue())
 
 @main.route('/queue/dequeue', methods=['POST'])
 def dequeue_queue():
     if queue_object.dequeue():
-        flash('Login attempt has been dequeued', 'success')
+        flash('Access attempt has been dequeued.', 'success')
     else:
-        flash('The queue is already empty, enqueue a login attempt to try and dequeue', 'danger')
+        flash('The queue is already empty. Enqueue an access attempt to try and dequeue.', 'danger')
     return redirect(url_for('main.queue'))
+
+@main.route('/queue/regenerate', methods=['POST'])
+def regenerate_queue():
+    try:
+        # Run the Python script to regenerate queue logs
+        subprocess.run(["python", "app/scripts/script_queue.py"], check=True)
+        flash("Queue logs have been regenerated.", "success")
+    except subprocess.CalledProcessError as e:
+        flash(f"Failed to regenerate queue logs: {e}", "danger")
+    return redirect(url_for("main.queue"))
+
+
+@main.route('/binary_tree', methods=['GET', 'POST'])
+def binary_tree():
+    if request.method == 'POST':
+        operation = request.form.get('operation')
+        value = request.form.get('value')
+        
+        if not value:
+            flash("Please enter a log entry value", 'danger')
+            return redirect(url_for('main.binary_tree'))
+        
+        try:
+            if operation == 'insert':
+                binary_tree_instance.insert(value)
+                flash(f"Log '{value}' has been inserted into the tree.", 'success')
+            elif operation == 'delete':
+                if binary_tree_instance.delete(value):
+                    flash(f"Log '{value}' has been deleted from the tree.", 'success')
+                else:
+                    flash(f"Log '{value}' not found in the tree for deletion.", 'danger')
+            elif operation == 'search':
+                if binary_tree_instance.search(value):
+                    flash(f"Log '{value}' was found in the tree.", 'success')
+                else:
+                    flash(f"Log '{value}' not found in the tree.", 'danger')
+        except Exception as e:
+            flash(f"An error occurred: {e}", 'danger')
+        return redirect(url_for('main.binary_tree'))
+
+    # For GET requests, perform the traversals to show the current tree structure
+    inorder = binary_tree_instance.inorder_traversal()
+    preorder = binary_tree_instance.preorder_traversal()
+    postorder = binary_tree_instance.postorder_traversal()
+
+    return render_template(
+        'binary_tree.html',
+        inorder=inorder,
+        preorder=preorder,
+        postorder=postorder
+    )
 
 
 @main.route('/array', methods=['GET', 'POST'])
@@ -101,70 +167,36 @@ def array():
         return redirect(url_for('main.array'))
     return render_template('array.html', array=live_array)
 
-@main.route('/hash_table', methods=['GET', 'POST'])
-def hash_table():
-    if request.method == 'POST':
-        key = request.form.get('key')
-        value = request.form.get('value')
-        if key and value:
-            hash_table_instance.insert(key, value)
-        return redirect(url_for('main.hash_table'))
-    return render_template('hash_table.html', table=hash_table_instance.get_table(), enumerate=enumerate)
+@main.route('/quicksort_binary_search', methods=['GET', 'POST'])
+def quicksort_binary_search():
+    logs = sorting_instance.get_logs()  # Fetch logs to display
+    return render_template('quicksort_binary_search.html', logs=logs)
 
-@main.route('/hash_table/delete', methods=['POST'])
-def delete_from_hashtable():
-    key = request.form.get('key_delete')
-    hash_table_instance.delete(key)
-    return redirect(url_for('main.hash_table'))
+@main.route('/sort_logs', methods=['POST'])
+def sort_logs():
+    sorting_instance.sort_logs()  # Sort the logs using quicksort
+    flash("Logs have been sorted.", 'success')
+    return redirect(url_for('main.quicksort_binary_search'))
 
-@main.route('/hash_table/search', methods=['POST'])
-def search_in_hashtable():
-    key = request.form.get('search_key')
-    value = hash_table_instance.search(key)
-    return render_template('hash_table.html', table=hash_table_instance.get_table(), search_key=key, search_result=value)
+@main.route('/shuffle_logs', methods=['POST'])
+def shuffle_logs():
+    sorting_instance.disorganize_logs()  # Shuffle the logs randomly
+    flash("Logs have been shuffled.", 'info')
+    return redirect(url_for('main.quicksort_binary_search'))
 
-@main.route('/binary_tree', methods=['GET', 'POST'])
-def binary_tree():
-    current_tree = binary_tree_instance.get_inorder()
-    message = ""
-    
-    if request.method == 'POST':
-        operation = request.form.get('operation')
+@main.route('/search_log', methods=['POST'])
+def search_log():
+    log_entry = request.form.get('log_entry')
+    if log_entry:
+        index = sorting_instance.search_log(log_entry)
+        if isinstance(index, int):
+            flash(f"Log entry found at position {index + 1}.", 'success')
+        else:
+            flash("Log entry not found.", 'danger')
+    else:
+        flash("Please enter a log entry to search.", 'warning')
+    return redirect(url_for('main.quicksort_binary_search'))
 
-        if operation == 'insert':
-            value = int(request.form.get('value'))
-            binary_tree_instance.insert(value)
-            message = f"Inserted {value} into the tree."
-        
-        elif operation == 'delete':
-            value = int(request.form.get('value'))
-            binary_tree_instance.delete(value)
-            message = f"Deleted {value} from the tree."
-        
-        elif operation == 'search':
-            value = int(request.form.get('value'))
-            found = binary_tree_instance.search(value)
-            message = f"Value {value} {'found' if found else 'not found'} in the tree."
-        
-        return redirect(url_for('main.binary_tree', message=message))
-
-    return render_template('binary_tree.html', tree=current_tree, message=message)
-
-@main.route('/sorting', methods=['GET', 'POST'])
-def sorting():
-    sorted_list = None  # Initialize sorted_list as None for GET request
-    if request.method == 'POST':
-        raw_input = request.form.get('numbers')
-        if raw_input:
-            try:
-                # Convert the input string to a list of integers
-                numbers = list(map(int, raw_input.split(',')))
-                sorted_list = sorting_instance.quicksort(numbers)  # Sort the list
-            except ValueError:
-                sorted_list = ['Invalid input. Please enter numbers separated by commas.']
-    
-    # Render the template with sorted_list initialized
-    return render_template('sorting.html', sorted_list=sorted_list)
 
 @main.route('/graph', methods=['GET', 'POST'])
 def graph():
@@ -189,8 +221,8 @@ def graph():
 
     return render_template('graph.html', graph=current_graph, message=message)
 
-@main.route('/linked_list', methods=['GET', 'POST'])
-def log_list():
+@main.route('/double_linked_list', methods=['GET', 'POST'])
+def double_linked_list():
     live_list_items = live_list.to_list()  # Changed variable name for clarity
     
     if request.method == 'POST':
@@ -228,6 +260,6 @@ def log_list():
             live_list.clear()
             flash('All log entries have been cleared', 'success')
 
-        return redirect(url_for('main.log_list'))
+        return redirect(url_for('main.double_linked_list'))
 
-    return render_template('double_link_list.html', logs=live_list_items)
+    return render_template('double_linked_list.html', logs=live_list_items)

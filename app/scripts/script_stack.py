@@ -1,4 +1,8 @@
-[
+import json
+import os
+
+# Define the default stack logs
+default_logs = [
     {
         "username": "user1",
         "timestamp": "2024-10-21T10:00:00Z",
@@ -28,10 +32,12 @@
         "username": "user6",
         "status": "success",
         "timestamp": "2024-10-23T12:02:49.003673"
-    },
-    {
-        "username": "bentheblaster",
-        "status": "sucess",
-        "timestamp": "2024-10-28T03:32:46.440016"
     }
 ]
+
+# Path to the stack logs file
+logs_path = os.path.join(os.path.dirname(__file__), '..', 'logs', 'stack_logs.json')
+
+# Write the default logs to the file
+with open(logs_path, 'w') as log_file:
+    json.dump(default_logs, log_file, indent=4)

@@ -2,37 +2,57 @@ import os
 import json
 
 class Node:
-    """
-    A Node in a doubly linked list.
-    """
     def __init__(self, data):
         self.data = data
         self.next = None
-        self.prev = None
+        self.before = None
 
 class DoublyLinkedList:
     def __init__(self):
         self.head = None
-        self.logs_path = os.path.join(os.path.dirname(__file__), '..', 'logs', 'app_logs.json')
+        self.logs_path = os.path.join(os.path.dirname(__file__), '..', 'logs', 'double_linked_list_logs.json')
+        self.default_logs = [
+            "User login attempt on WebApp1 (Success)",
+            "Database connection error on MySQL server (Error: Connection timeout)",
+            "File upload on WebApp1 (Success)",
+            "User logout on WebApp1 (Success)",
+            "Failed API request on WebApp2 (Error: Unauthorized)",
+            "Service restart on Apache Server (Info: Restart completed)",
+            "Failed login attempt on Admin Portal (Error: Incorrect password)",
+            "User password change on WebApp1 (Success)",
+            "Data backup completed on Backup Server (Info: Backup successful)",
+            "Disk usage warning on File Server (Warning: Disk space low)"
+        ]
         self.load_logs()
 
     def load_logs(self):
         """
-        Load logs from the JSON file and populate the doubly linked list.
+        Load logs from the JSON file and populate the doubly linked list. Initialize with default logs if empty.
         """
         if os.path.exists(self.logs_path):
             with open(self.logs_path, 'r') as logfile:
                 logs = json.load(logfile)
-                for log in logs:
-                    self.append(log)
+                if logs:
+                    for log in logs:
+                        self.append(log)
+                else:
+                    # If file is empty, load default logs
+                    for log in self.default_logs:
+                        self.append(log)
+        else:
+            # File does not exist, create it with default logs
+            for log in self.default_logs:
+                self.append(log)
+            self.save_logs()
 
     def save_logs(self):
-        """
-        Save the current state of the doubly linked list to the JSON file.
-        """
         logs = self.to_list()
         with open(self.logs_path, 'w') as logfile:
             json.dump(logs, logfile, indent=4)
+
+    # Rest of the methods for append, insert_at, delete_at, update_at, get_at, clear, and to_list
+    # (from the code you provided)
+
 
     def append(self, data):
         """
@@ -46,7 +66,7 @@ class DoublyLinkedList:
             while current.next:
                 current = current.next
             current.next = new_node
-            new_node.prev = current
+            new_node.before = current
         self.save_logs()
 
     def insert_at(self, index, data):
@@ -57,7 +77,7 @@ class DoublyLinkedList:
         if index == 0:
             new_node.next = self.head
             if self.head:
-                self.head.prev = new_node
+                self.head.before = new_node
             self.head = new_node
         else:
             current = self.head
@@ -69,9 +89,9 @@ class DoublyLinkedList:
                 return False
             new_node.next = current.next
             if current.next:
-                current.next.prev = new_node
+                current.next.before = new_node
             current.next = new_node
-            new_node.prev = current
+            new_node.before = current
         self.save_logs()
         return True
 
@@ -84,18 +104,18 @@ class DoublyLinkedList:
         if index == 0:
             self.head = self.head.next
             if self.head:
-                self.head.prev = None
+                self.head.before = None
         else:
             current = self.head
             for _ in range(index):
                 if current is None:
                     return False
                 current = current.next
-            if current is None or current.prev is None:
+            if current is None or current.before is None:
                 return False
             if current.next:
-                current.next.prev = current.prev
-            current.prev.next = current.next
+                current.next.before = current.before
+            current.before.next = current.next
         self.save_logs()
         return True
 

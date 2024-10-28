@@ -2,8 +2,21 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h3>Binary Tree Operations</h3>
-    
+    <h3>Binary Tree Operations - Critical Error Logs</h3>
+
+    <!-- Display Success or Error Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="container mt-3">
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} mt-2">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
     <!-- Form to Select Operation and Input Values -->
     <form method="POST">
         <label for="operation">Select Operation:</label>
@@ -13,21 +26,36 @@
             <option value="search">Search</option>
         </select>
 
-        <label for="value" class="mt-2">Value:</label>
-        <input type="number" name="value" id="value" class="form-control">
+        <label for="value" class="mt-2">Log Entry:</label>
+        <input type="text" name="value" id="value" class="form-control" placeholder="Enter log entry">
 
         <button type="submit" class="btn btn-primary mt-2">Submit</button>
     </form>
 
-    <!-- Display the Message (Result of Operation) -->
-    {% if message %}
-        <div class="alert alert-info mt-3">{{ message }}</div>
-    {% endif %}
-
     <!-- Display Current Binary Tree (In-Order Traversal) -->
     <h4 class="mt-4">Current Binary Tree (In-Order Traversal)</h4>
     <ul class="list-group mt-3">
-        {% for item in tree %}
+        {% for item in inorder %}
+        <li class="list-group-item">Node: {{ item }}</li>
+        {% else %}
+        <li class="list-group-item">Tree is empty</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Display Pre-Order Traversal -->
+    <h4 class="mt-4">Binary Tree (Pre-Order Traversal)</h4>
+    <ul class="list-group mt-3">
+        {% for item in preorder %}
+        <li class="list-group-item">Node: {{ item }}</li>
+        {% else %}
+        <li class="list-group-item">Tree is empty</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Display Post-Order Traversal -->
+    <h4 class="mt-4">Binary Tree (Post-Order Traversal)</h4>
+    <ul class="list-group mt-3">
+        {% for item in postorder %}
         <li class="list-group-item">Node: {{ item }}</li>
         {% else %}
         <li class="list-group-item">Tree is empty</li>

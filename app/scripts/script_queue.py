@@ -1,4 +1,16 @@
-[
+import os
+import json
+
+# Define the path for the queue logs
+logs_path = os.path.join(os.path.dirname(__file__), '..', 'logs', 'queue_logs.json')
+
+# Sample logs to populate the queue
+sample_logs = [
+    {
+        "ip": "192.168.1.15",
+        "timestamp": "2024-10-21T10:10:00Z",
+        "reason": "blocked IP"
+    },
     {
         "ip": "10.0.0.5",
         "timestamp": "2024-10-21T10:15:00Z",
@@ -60,3 +72,9 @@
         "reason": "Failed Password"
     }
 ]
+
+# Write the sample logs to the file
+with open(logs_path, 'w') as log_file:
+    json.dump(sample_logs, log_file, indent=4)
+
+print("Queue logs have been regenerated.")

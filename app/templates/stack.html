@@ -1,9 +1,9 @@
 {% extends 'base.html' %}
 {% block content %}
 <div class="container mt-5">
-    <h3>Login Attempts stored in a Stack</h3>
+    <h3>Login Attempts Stored in a Stack</h3>
 
-    <!-- Here we will show error with flash using the flash class from the module Flask form pythom-->
+    <!-- Display Flash Messages for Feedback -->
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
             <div class="container mt-3">
@@ -16,26 +16,31 @@
         {% endif %}
     {% endwith %}
 
-    <!-- Now here I am going to set up the push for the Stack-->
+    <!-- Form to Push a Login Attempt onto the Stack -->
     <form method="POST">
-        <label for="push_log">Push a Login Attempt follow the format: username, status:</label>
-        <input type="text" name="push_log" id="push_log" class="form-control" placeholder="Enter the login attempt follow this formas: (username, status)">
+        <label for="push_log">Push a Login Attempt (format: username, status):</label>
+        <input type="text" name="push_log" id="push_log" class="form-control" placeholder="Enter the login attempt (username, status)">
         <button type="submit" class="btn btn-primary mt-2">Push</button>
     </form>
 
-    <!--Now here is where I will display the current stack from the /app/logs/stack_logs.json-->
-    <h4 class="mt-5">Current Stack(With the provided login Attempts by the user):</h4>
+    <!-- Display the Current Stack -->
+    <h4 class="mt-5">Current Stack (Login Attempts):</h4>
     <ul class="list-group">
         {% for log in stack %}
         <li class="list-group-item">
-            Username: {{ log['username']}}, Status: {{ log['status']}}, Timestamp: {{ log['timestamp'] }}
+            Username: {{ log['username'] }}, Status: {{ log['status'] }}, Timestamp: {{ log['timestamp'] }}
         </li>
         {% endfor %}
     </ul>
 
-    <!-- This is the form to be able to pop the Item from the stack using stack logic-->
+    <!-- Button to Pop the Last Item from the Stack -->
     <form method="POST" action="{{ url_for('main.pop_stack') }}">
         <button type="submit" class="btn btn-danger mt-3">Pop Last Login Attempt</button>
+    </form>
+
+    <!-- Button to Regenerate Stack Logs by Running the Shell Script -->
+    <form method="POST" action="{{ url_for('main.regenerate_stack') }}">
+        <button type="submit" class="btn btn-secondary mt-3">Regenerate Stack Logs</button>
     </form>
 </div>
 {% endblock %}
