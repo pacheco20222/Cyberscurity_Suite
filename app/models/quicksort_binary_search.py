@@ -1,3 +1,6 @@
+""" For this part since we are only sorting, and searching we will, not use a logs file, we will have a 
+    predetermined array, and we will import random to simply shuffle the logs
+"""
 import random
 
 class Sorting:
@@ -20,34 +23,35 @@ class Sorting:
             "New user created in WebApp2 (Info: Role assigned - Viewer)",
             "Antivirus update applied on all endpoints (Info: Definitions updated)"
         ]
-    
+        
     def disorganize_logs(self):
         """
         Shuffle the preset logs for demonstration.
         """
         random.shuffle(self.logs)
-
-    def quicksort(self, arr):
-        if len(arr) <= 1:
-            return arr
+        
+    def quicksort(self, array):
+        """A normal quicksort code to order the logs"""
+        if len(array) <= 1:
+            return array
         else:
-            pivot = arr[len(arr) // 2]
-            left = [x for x in arr if x < pivot]
-            middle = [x for x in arr if x == pivot]
-            right = [x for x in arr if x > pivot]
+            pivot = array[len(array) // 2]
+            left = [x for x in array if x < pivot]
+            middle = [x for x in array if x == pivot]
+            right = [x for x in array if x > pivot]
             return self.quicksort(left) + middle + self.quicksort(right)
-
-    def binary_search(self, arr, target):
+    
+    def binary_search(self, array, target):
         """
         Perform binary search on a sorted array.
-        Returns the index of the target if found, else returns -1.
+        Returns the index of the target if found, but if it does not find it will give a -1.
         """
-        left, right = 0, len(arr) - 1
+        left, right = 0, len(array) - 1
         while left <= right:
             mid = (left + right) // 2
-            if arr[mid] == target:
+            if array[mid] == target:
                 return mid  # Found the target
-            elif arr[mid] < target:
+            elif array[mid] < target:
                 left = mid + 1
             else:
                 right = mid - 1
@@ -55,16 +59,16 @@ class Sorting:
 
     def get_logs(self):
         """
-        Return the current state of logs (useful for displaying in UI).
+        This will return the current state of the array, so we display in depending on what the user does.
         """
         return self.logs
-
+    
     def sort_logs(self):
         """
-        Sort the logs using quicksort and update the logs list.
+        Use the quicksor to sort the logs.
         """
         self.logs = self.quicksort(self.logs)
-
+        
     def search_log(self, log_entry):
         """
         Search for a log entry in the sorted logs.

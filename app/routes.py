@@ -84,6 +84,7 @@ def regenerate_queue():
     try:
         # Run the Python script to regenerate queue logs
         subprocess.run(["python", "app/scripts/script_queue.py"], check=True)
+        queue_object.load_queue()
         flash("Queue logs have been regenerated.", "success")
     except subprocess.CalledProcessError as e:
         flash(f"Failed to regenerate queue logs: {e}", "danger")
@@ -110,18 +111,19 @@ def binary_tree():
                 else:
                     flash(f"Log '{value}' not found in the tree for deletion.", 'danger')
             elif operation == 'search':
-                if binary_tree_instance.search(value):
-                    flash(f"Log '{value}' was found in the tree.", 'success')
+                position = binary_tree_instance.search(value)
+                if position != -1:
+                    flash(f"Log '{value}' was found in the tree at position {position}.", 'success')
                 else:
                     flash(f"Log '{value}' not found in the tree.", 'danger')
         except Exception as e:
             flash(f"An error occurred: {e}", 'danger')
         return redirect(url_for('main.binary_tree'))
 
-    # For GET requests, perform the traversals to show the current tree structure
-    inorder = binary_tree_instance.inorder_traversal()
-    preorder = binary_tree_instance.preorder_traversal()
-    postorder = binary_tree_instance.postorder_traversal()
+    # For GET requests, perform the traversals to show the current tree structure with positions
+    inorder = binary_tree_instance.inorder_traversal_with_position()
+    preorder = binary_tree_instance.preorder_traversal_with_position()
+    postorder = binary_tree_instance.postorder_traversal_with_position()
 
     return render_template(
         'binary_tree.html',
@@ -129,6 +131,18 @@ def binary_tree():
         preorder=preorder,
         postorder=postorder
     )
+
+
+@main.route('/binary_tree/regenerate', methods=['POST'])
+def regenerate_binary_tree():
+    try:
+        # Run the Python script to regenerate binary tree logs
+        subprocess.run(["python", "app/scripts/script_binary_tree.py"], check=True)
+        binary_tree_instance.load_logs()
+        flash("Binary tree logs have been regenerated.", "success")
+    except subprocess.CalledProcessError as e:
+        flash(f"Failed to regenerate binary tree logs: {e}", "danger")
+    return redirect(url_for("main.binary_tree"))
 
 
 @main.route('/array', methods=['GET', 'POST'])
@@ -167,9 +181,21 @@ def array():
         return redirect(url_for('main.array'))
     return render_template('array.html', array=live_array)
 
+@main.route('/array/regenerate', methods=['POST'])
+def regenerate_array():
+    try:
+        # Run the Python script to regenerate array logs
+        subprocess.run(["python", "app/scripts/script_array.py"], check=True)
+        array_object.load_array()
+        flash("Array logs have been regenerated.", "success")
+    except subprocess.CalledProcessError as e:
+        flash(f"Failed to regenerate array logs: {e}", "danger")
+    return redirect(url_for("main.array"))
+
+
 @main.route('/quicksort_binary_search', methods=['GET', 'POST'])
 def quicksort_binary_search():
-    logs = sorting_instance.get_logs()  # Fetch logs to display
+    logs = sorting_instance.get_logs()  # This will get the logs from their current state
     return render_template('quicksort_binary_search.html', logs=logs)
 
 @main.route('/sort_logs', methods=['POST'])
@@ -223,12 +249,13 @@ def graph():
 
 @main.route('/double_linked_list', methods=['GET', 'POST'])
 def double_linked_list():
-    live_list_items = live_list.to_list()  # Changed variable name for clarity
+    current_doubly_linked_list = live_list.to_list_with_pointers()  # This is the method I created to mark the head and the tail of the doubly linked list
     
     if request.method == 'POST':
         index = request.form.get('index')
         operation = request.form.get('operation')
-
+        
+        """Check the operations"""
         if operation == 'insert':
             log = request.form.get('log')
             if live_list.insert_at(int(index), log):
@@ -261,5 +288,19 @@ def double_linked_list():
             flash('All log entries have been cleared', 'success')
 
         return redirect(url_for('main.double_linked_list'))
+    
+    return render_template('double_linked_list.html', logs=current_doubly_linked_list)
 
-    return render_template('double_linked_list.html', logs=live_list_items)
+@main.route('/double_linked_list/regenerate', methods=['POST'])
+def regenerate_double_linked_list():
+    try:
+        # Run the Python script located in the scripts folder
+        subprocess.run(["python", "app/scripts/script_double_linked_list.py"], check=True)
+        live_list.load_logs()  # Ensure logs are reloaded after regeneration
+        flash("Double Linked List logs have been regenerated.", "success")
+    except subprocess.CalledProcessError as e:
+        flash(f"Failed to regenerate Double Linked List logs: {e}", "danger")
+    
+    # Redirect back to the doubly linked list view
+    return redirect(url_for('main.double_linked_list'))
+
