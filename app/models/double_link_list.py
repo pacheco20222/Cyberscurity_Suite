@@ -17,7 +17,7 @@ class DoublyLinkedList:
         self.head = None
         self.tail = None  # Track the tail of the list for efficient appending
         self.logs_path = os.path.join(os.path.dirname(__file__), '..', 'logs', 'double_linked_list_logs.json')
-        self.load_logs()
+        self.load_doubly_linked_list()
         
     def load_doubly_linked_list(self):
         """

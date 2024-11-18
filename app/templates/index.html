@@ -1,14 +1,53 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h2>Menu - Choose a Data Structure</h2>
-    <div class="menu">
-        <a href="{{ url_for('main.array') }}">Arrays</a>
-        <a href="{{ url_for('main.stack') }}">Stacks</a>
-        <a href="{{ url_for('main.queue') }}">Queues</a>
-        <a href="{{ url_for('main.binary_tree') }}">Binary Tree</a>
-        <a href="{{ url_for('main.graph') }}">Graph</a>
-        <a href="{{ url_for('main.double_linked_list') }}">Linked List</a>
-        <a href="{{ url_for('main.quicksort_binary_search') }}">Sorting</a>
+<div class="container text-center mt-5">
+    <h2 class="mb-4">Welcome to the Cybersecurity Suite</h2>
+    <p class="lead">
+        This application demonstrates various data structures, their functionalities, and visual representations. 
+        Each structure has been integrated into a user-friendly interface for easy interaction and understanding.
+        The idea is to provide a hands on experience with Cybersecurity logs and data structures.
+        For a company to train employees to identify and understand logs, this application can be used as a training tool.
+    </p>
+    <hr>
+    <div class="mt-4">
+        <h4>Available Data Structures and Their Functionalities:</h4>
+        <ul class="text-start mt-3 mx-auto" style="max-width: 600px;">
+            <li><strong>Arrays:</strong> Perform insertion, deletion, update, and access operations. Includes a regenerate script to reset array logs.</li>
+            <li><strong>Stacks:</strong> Demonstrates LIFO (Last In, First Out) operations like push and pop. Comes with a regenerate script.</li>
+            <li><strong>Queues:</strong> Demonstrates FIFO (First In, First Out) operations like enqueue and dequeue. Includes a regenerate script for resetting logs.</li>
+            <li><strong>Binary Tree:</strong> Visualizes a binary tree structure with operations like insert, delete, and search. Features a regenerate script.</li>
+            <li><strong>Graphs:</strong> Add nodes and edges, and compute the Minimum Spanning Tree (MST) using Kruskal's algorithm. Visualized graphically.</li>
+            <li><strong>Doubly Linked List:</strong> Add, delete, and update nodes, with operations that emphasize the linked list's bidirectional structure. Includes a regenerate script.</li>
+            <li><strong>Sorting:</strong> Demonstrates quicksort and binary search on a list of logs.</li>
+        </ul>
     </div>
+    <hr>
+    <h4 class="mt-4">Navigate to a Data Structure:</h4>
+    <div class="menu mt-3">
+        <div class="row">
+            <div class="col-md-6 col-lg-4">
+                <a href="{{ url_for('main.array') }}" class="btn btn-primary w-100 mb-2">Arrays</a>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <a href="{{ url_for('main.stack') }}" class="btn btn-primary w-100 mb-2">Stacks</a>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <a href="{{ url_for('main.queue') }}" class="btn btn-primary w-100 mb-2">Queues</a>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <a href="{{ url_for('main.binary_tree') }}" class="btn btn-primary w-100 mb-2">Binary Tree</a>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <a href="{{ url_for('main.graph') }}" class="btn btn-primary w-100 mb-2">Graph</a>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <a href="{{ url_for('main.double_linked_list') }}" class="btn btn-primary w-100 mb-2">Linked List</a>
+            </div>
+            <div class="col-md-6 col-lg-4">
+                <a href="{{ url_for('main.quicksort_binary_search') }}" class="btn btn-primary w-100 mb-2">Sorting</a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

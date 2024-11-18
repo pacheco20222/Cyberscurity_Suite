@@ -1,156 +1,161 @@
 import os
 import json
 from flask import flash
+import pydot
+
 
 class TreeNode:
-    """
-    Node structure for the Binary Tree.
-    """
     def __init__(self, data):
         self.data = data
         self.left = None
         self.right = None
 
+
 class BinaryTree:
     def __init__(self):
         self.root = None
         self.logs_path = os.path.join(os.path.dirname(__file__), '..', 'logs', 'binary_tree_logs.json')
+        self.image_path = os.path.join(os.path.dirname(__file__), '..', 'static', 'img', 'binary_tree.png')
         self.load_logs()
 
     def load_logs(self):
-        """
-        Load logs from JSON file and populate the binary tree. Initialize with default logs if empty.
-        """
         if os.path.exists(self.logs_path):
             with open(self.logs_path, 'r') as logfile:
                 logs = json.load(logfile)
-                if logs:
-                    for log in logs:
-                        self.insert(log)
-                else:
-                    for log in self.default_logs:
-                        self.insert(log)
+                self.build_tree(logs)
         else:
-            for log in self.default_logs:
-                self.insert(log)
+            default_logs = ["Node 1", "Node 2", "Node 3", "Node 4", "Node 5", "Node 6", "Node 7"]
+            self.build_tree(default_logs)
             self.save_logs()
 
     def save_logs(self):
-        logs = [data for data, _ in self.inorder_traversal_with_position()]
+        logs = self.level_order_traversal()
         with open(self.logs_path, 'w') as logfile:
             json.dump(logs, logfile, indent=4)
 
+    def build_tree(self, data_list):
+        """Constructs a complete binary tree from a list of data."""
+        if not data_list:
+            return
+
+        self.root = TreeNode(data_list[0])
+        queue = [self.root]
+        index = 1
+
+        while index < len(data_list):
+            current = queue.pop(0)
+
+            if index < len(data_list):
+                current.left = TreeNode(data_list[index])
+                queue.append(current.left)
+                index += 1
+
+            if index < len(data_list):
+                current.right = TreeNode(data_list[index])
+                queue.append(current.right)
+                index += 1
+
+        self.generate_tree_image()
+
+    def level_order_traversal(self):
+        """Returns a level-order traversal of the binary tree as a list."""
+        if not self.root:
+            return []
+
+        result = []
+        queue = [self.root]
+
+        while queue:
+            current = queue.pop(0)
+            result.append(current.data)
+
+            if current.left:
+                queue.append(current.left)
+            if current.right:
+                queue.append(current.right)
+
+        return result
+
     def insert(self, data):
-        """
-        Insert data into the binary tree with validation.
-        """
-        try:
-            if not isinstance(data, str):
-                raise ValueError("Data should be a string.")
-            if self.root is None:
-                self.root = TreeNode(data)
-            else:
-                self._insert_recursive(self.root, data)
-            self.save_logs()
-        except ValueError as e:
-            flash(f"Insertion Error: {e}", 'danger')
-
-    def _insert_recursive(self, node, data):
-        if data < node.data:
-            if node.left is None:
-                node.left = TreeNode(data)
-            else:
-                self._insert_recursive(node.left, data)
+        """Inserts a new node to maintain a complete binary tree."""
+        if not self.root:
+            self.root = TreeNode(data)
         else:
-            if node.right is None:
-                node.right = TreeNode(data)
-            else:
-                self._insert_recursive(node.right, data)
+            queue = [self.root]
+            while queue:
+                current = queue.pop(0)
 
-    def search(self, data):
-        """
-        Search for a node in the binary tree with validation.
-        Returns the position if found, or -1 if not found.
-        """
-        if not isinstance(data, str):
-            flash("Search Error: Data should be a string", 'danger')
-            return -1
-        return self._search_with_position(self.root, data, 1)
+                if not current.left:
+                    current.left = TreeNode(data)
+                    break
+                else:
+                    queue.append(current.left)
 
-    def _search_with_position(self, node, data, position):
-        if node is None:
-            return -1
-        if node.data == data:
-            return position
-        elif data < node.data:
-            return self._search_with_position(node.left, data, position * 2)
-        else:
-            return self._search_with_position(node.right, data, position * 2 + 1)
+                if not current.right:
+                    current.right = TreeNode(data)
+                    break
+                else:
+                    queue.append(current.right)
+
+        self.generate_tree_image()
+        self.save_logs()
 
     def delete(self, data):
-        """
-        Delete a node from the binary tree.
-        """
-        if not isinstance(data, str):
-            flash("Deletion Error: Data should be a string", 'danger')
+        """Deletes a node by replacing it with the deepest and rightmost node."""
+        if not self.root:
+            flash("Tree is empty. Cannot delete.", "danger")
             return False
-        exists = self.search(data) != -1
-        self.root = self._delete_recursive(self.root, data)
-        self.save_logs()
-        return exists
 
-    def _delete_recursive(self, node, data):
-        if node is None:
-            return node
-        if data < node.data:
-            node.left = self._delete_recursive(node.left, data)
-        elif data > node.data:
-            node.right = self._delete_recursive(node.right, data)
+        queue = [self.root]
+        node_to_delete = None
+        last_node = None
+        parent_of_last = None
+
+        while queue:
+            current = queue.pop(0)
+            if current.data == data:
+                node_to_delete = current
+
+            if current.left:
+                parent_of_last = current
+                queue.append(current.left)
+
+            if current.right:
+                parent_of_last = current
+                queue.append(current.right)
+
+            last_node = current
+
+        if node_to_delete:
+            node_to_delete.data = last_node.data
+            if parent_of_last and parent_of_last.right == last_node:
+                parent_of_last.right = None
+            elif parent_of_last and parent_of_last.left == last_node:
+                parent_of_last.left = None
+            else:
+                self.root = None
+
+            self.generate_tree_image()
+            self.save_logs()
+            return True
         else:
-            if node.left is None:
-                return node.right
-            elif node.right is None:
-                return node.left
-            temp_val = self._find_min(node.right)
-            node.data = temp_val.data
-            node.right = self._delete_recursive(node.right, temp_val.data)
-        return node
+            flash(f"Log '{data}' not found in the tree for deletion.", "danger")
+            return False
 
-    def _find_min(self, node):
-        current = node
-        while current.left:
-            current = current.left
-        return current
+    def generate_tree_image(self):
+        """Generate a graphical representation of the binary tree and save it as an image."""
+        if not os.path.exists(os.path.dirname(self.image_path)):
+            os.makedirs(os.path.dirname(self.image_path))
 
-    def inorder_traversal_with_position(self):
-        result = []
-        self._inorder_recursive_with_position(self.root, result, 1)
-        return result
+        graph = pydot.Dot(graph_type="graph")
+        self._add_nodes_to_graph(self.root, graph)
+        graph.write_png(self.image_path)
 
-    def _inorder_recursive_with_position(self, node, result, position):
+    def _add_nodes_to_graph(self, node, graph, parent_label=None):
         if node:
-            self._inorder_recursive_with_position(node.left, result, position * 2)
-            result.append((node.data, position))
-            self._inorder_recursive_with_position(node.right, result, position * 2 + 1)
-
-    def preorder_traversal_with_position(self):
-        result = []
-        self._preorder_recursive_with_position(self.root, result, 1)
-        return result
-
-    def _preorder_recursive_with_position(self, node, result, position):
-        if node:
-            result.append((node.data, position))
-            self._preorder_recursive_with_position(node.left, result, position * 2)
-            self._preorder_recursive_with_position(node.right, result, position * 2 + 1)
-
-    def postorder_traversal_with_position(self):
-        result = []
-        self._postorder_recursive_with_position(self.root, result, 1)
-        return result
-
-    def _postorder_recursive_with_position(self, node, result, position):
-        if node:
-            self._postorder_recursive_with_position(node.left, result, position * 2)
-            self._postorder_recursive_with_position(node.right, result, position * 2 + 1)
-            result.append((node.data, position))
+            current_label = str(node.data)
+            graph.add_node(pydot.Node(current_label, style="filled", fillcolor="green"))
+            if parent_label:
+                graph.add_edge(pydot.Edge(parent_label, current_label))
+            self._add_nodes_to_graph(node.left, graph, current_label)
+            self._add_nodes_to_graph(node.right, graph, current_label)
