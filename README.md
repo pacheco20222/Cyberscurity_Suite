@@ -116,7 +116,7 @@ Data Structures and Algorithms
     cd Cybersecurity_Suite
     ```
 
-## Create a Python venve (Recommended)
+## Create a Python venv (Recommended)
 1. **Ubuntu/Debian or MacOS**:
     ```bash
     python3 -m venv venv
