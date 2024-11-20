@@ -1,24 +1,56 @@
+""" 
+Importing os to work with reading files, and to work with json files we use the json module.
+Importing the pydot since, this will be used to generate the graphical representation of the binary tree.
+Using the flash module from flask to display messages to the user.
+In this case, this is not a live object of the binary tree, this generates jpg image of the binary tree each time
+there is an operation or a change in the binary the image it is reset again.
+"""
+
 import os
 import json
 from flask import flash
 import pydot
 
-
 class TreeNode:
+    """
+    A class representing a node in a binary tree.
+
+    Attributes:
+        data: The data stored in the node.
+        left: A reference to the left child node.
+        right: A reference to the right child node.
+    """
     def __init__(self, data):
+        """
+        Initializes a TreeNode with the given data.
+        """
         self.data = data
         self.left = None
         self.right = None
 
-
 class BinaryTree:
+    """
+    A class representing a complete binary tree.
+
+    Attributes:
+        root: The root node of the binary tree.
+        logs_path: The file path to store the binary tree logs.
+        image_path: The file path to store the binary tree image.
+    """
     def __init__(self):
+        """
+        Initializes a BinaryTree with no root and sets up paths for logs and images.
+        """
         self.root = None
         self.logs_path = os.path.join(os.path.dirname(__file__), '..', 'logs', 'binary_tree_logs.json')
         self.image_path = os.path.join(os.path.dirname(__file__), '..', 'static', 'img', 'binary_tree.png')
         self.load_logs()
 
     def load_logs(self):
+        """
+        Loads the binary tree logs from a file and builds the tree.
+        If the logs file does not exist, it creates a default tree and saves the logs.
+        """
         if os.path.exists(self.logs_path):
             with open(self.logs_path, 'r') as logfile:
                 logs = json.load(logfile)
@@ -29,12 +61,18 @@ class BinaryTree:
             self.save_logs()
 
     def save_logs(self):
+        """
+        Saves the current state of the binary tree to a logs file.
+        """
         logs = self.level_order_traversal()
         with open(self.logs_path, 'w') as logfile:
             json.dump(logs, logfile, indent=4)
 
     def build_tree(self, data_list):
-        """Constructs a complete binary tree from a list of data."""
+        """
+        Constructs a complete binary tree from a list of data.
+        the function takes the data_list, which will help to build the binary tree
+        """
         if not data_list:
             return
 
@@ -58,7 +96,12 @@ class BinaryTree:
         self.generate_tree_image()
 
     def level_order_traversal(self):
-        """Returns a level-order traversal of the binary tree as a list."""
+        """
+        Returns a level-order traversal of the binary tree as a list.
+
+        Returns:
+            A list representing the level-order traversal of the binary tree.
+        """
         if not self.root:
             return []
 
@@ -77,7 +120,10 @@ class BinaryTree:
         return result
 
     def insert(self, data):
-        """Inserts a new node to maintain a complete binary tree."""
+        """
+        Inserts a new node to maintain a complete binary tree.
+        Data will be taken and put in the binary tree, which is the argument
+        """
         if not self.root:
             self.root = TreeNode(data)
         else:
@@ -101,7 +147,11 @@ class BinaryTree:
         self.save_logs()
 
     def delete(self, data):
-        """Deletes a node by replacing it with the deepest and rightmost node."""
+        """
+        Deletes a node by replacing it with the deepest and rightmost node.
+        the argument it tales is the data of the node to be deleted, and 
+        it will go ahead and return true when the node is deleted, and false if it was not successful
+        """
         if not self.root:
             flash("Tree is empty. Cannot delete.", "danger")
             return False
@@ -143,7 +193,9 @@ class BinaryTree:
             return False
 
     def generate_tree_image(self):
-        """Generate a graphical representation of the binary tree and save it as an image."""
+        """
+        Generates a graphical representation of the binary tree and saves it as an image.
+        """
         if not os.path.exists(os.path.dirname(self.image_path)):
             os.makedirs(os.path.dirname(self.image_path))
 
@@ -152,6 +204,12 @@ class BinaryTree:
         graph.write_png(self.image_path)
 
     def _add_nodes_to_graph(self, node, graph, parent_label=None):
+        """
+        Recursively adds nodes to the graph for visualization.
+        It takes arguments, such as the node, the node will be added to the graph, 
+        which the graph is done with the ibrary pydot.
+        Also the parent_label, is the label of the parent node
+        """
         if node:
             current_label = str(node.data)
             graph.add_node(pydot.Node(current_label, style="filled", fillcolor="green"))
