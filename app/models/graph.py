@@ -57,7 +57,7 @@ class Graph:
         Apply Kruskal's algorithm to find the Minimum Spanning Tree (MST).
         
         Returns:
-        list: A list of edges representing the MST.
+        tuple: A tuple containing the list of edges representing the MST and the total weight of the MST.
         """
         # Sort edges by weight
         self.edges.sort(key=lambda x: x[2])
@@ -88,13 +88,18 @@ class Graph:
             rank[node] = 0
 
         mst = []
+        total_weight = 0
         for edge in self.edges:
             node1, node2, weight = edge
             if find(node1) != find(node2):
                 union(node1, node2)
                 mst.append(edge)
+                total_weight += weight
+                print("MST Total Weight:", total_weight)  # Depuración
 
-        return mst
+        return mst, total_weight
+
+
 
     def generate_graph_image(self, mst_edges=None):
         """

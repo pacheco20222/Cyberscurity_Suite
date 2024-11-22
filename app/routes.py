@@ -353,10 +353,9 @@ def regenerate_binary_tree():
 def graph():
     """
     Route for handling graph operations such as adding nodes, edges, and calculating the MST using Kruskal's algorithm.
-    Operations include adding nodes, adding edges, and generating the Minimum Spanning Tree (MST) using Kruskal's algorithm.
     """
     mst_edges = []
-    message = ""
+    total_weight = 0  # We start with the total weight of the MST as 0
     
     if request.method == 'POST':
         operation = request.form.get('operation')
@@ -385,17 +384,17 @@ def graph():
                 flash("Please provide both nodes and a weight for the edge.", 'danger')
 
         elif operation == 'kruskal':
-            mst_edges = graph_instance.kruskal()
+            mst_edges, total_weight = graph_instance.kruskal() 
             if mst_edges:
                 flash("Minimum Spanning Tree (MST) generated using Kruskal's algorithm.", 'success')
             else:
                 flash("Graph is empty or no MST could be generated.", 'danger')
 
         graph_instance.generate_graph_image(mst_edges if operation == 'kruskal' else None)
-        return redirect(url_for('main.graph'))
 
     return render_template(
         'graph.html',
         graph_image=url_for('static', filename='img/graph.png'),
-        mst_edges=mst_edges
+        mst_edges=mst_edges,
+        total_weight=total_weight  
     )
