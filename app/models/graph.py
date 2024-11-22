@@ -1,18 +1,42 @@
 import os
 import pydot
 
-
 class Graph:
+    """
+    A class representing a graph using an adjacency list and edge list.
+
+    Attributes:
+        graph (dict): The adjacency list of the graph.
+        edges (list): The edge list of the graph for Kruskal's algorithm.
+        image_path (str): The file path to store the graph image.
+    """
     def __init__(self):
+        """
+        Initializes a Graph with an empty adjacency list and edge list, and sets up the path for the graph image.
+        """
         self.graph = {}  # Adjacency list
         self.edges = []  # Edge list for Kruskal's algorithm
         self.image_path = os.path.join(os.path.dirname(__file__), '..', 'static', 'img', 'graph.png')
 
     def add_node(self, node):
+        """
+        Adds a node to the graph.
+        
+        Parameters:
+        node (any): The node to be added to the graph.
+        """
         if node not in self.graph:
             self.graph[node] = []
 
     def add_edge(self, node1, node2, weight):
+        """
+        Adds an edge to the graph.
+        
+        Parameters:
+        node1 (any): The first node of the edge.
+        node2 (any): The second node of the edge.
+        weight (int/float): The weight of the edge.
+        """
         self.add_node(node1)
         self.add_node(node2)
         self.graph[node1].append((node2, weight))
@@ -20,10 +44,21 @@ class Graph:
         self.edges.append((node1, node2, weight))
 
     def get_graph(self):
+        """
+        Returns the adjacency list of the graph.
+        
+        Returns:
+        dict: The adjacency list of the graph.
+        """
         return self.graph
 
     def kruskal(self):
-        """Apply Kruskal's algorithm to find the MST."""
+        """
+        Apply Kruskal's algorithm to find the Minimum Spanning Tree (MST).
+        
+        Returns:
+        list: A list of edges representing the MST.
+        """
         # Sort edges by weight
         self.edges.sort(key=lambda x: x[2])
 
@@ -62,7 +97,12 @@ class Graph:
         return mst
 
     def generate_graph_image(self, mst_edges=None):
-        """Generate a graphical representation of the graph."""
+        """
+        Generate a graphical representation of the graph and save it as an image.
+        
+        Parameters:
+        mst_edges (list): A list of edges representing the MST (optional).
+        """
         if not os.path.exists(os.path.dirname(self.image_path)):
             os.makedirs(os.path.dirname(self.image_path))
 

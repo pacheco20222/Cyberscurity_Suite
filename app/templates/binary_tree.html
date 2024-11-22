@@ -29,6 +29,9 @@
             <option value="insert">Insert</option>
             <option value="delete">Delete</option>
             <option value="search">Search</option>
+            <option value="inorder">Inorder Traversal</option>
+            <option value="preorder">Preorder Traversal</option>
+            <option value="postorder">Postorder Traversal</option>
         </select>
 
         <label for="value" class="mt-2">Log Entry:</label>
@@ -45,6 +48,14 @@
         {% else %}
             <p>No binary tree structure available. Perform operations to generate a tree.</p>
         {% endif %}
+    </div>
+
+    <!-- Display traversals -->
+    <h4 class="mt-4">Traversals</h4>
+    <div class="mt-3">
+        <p><strong>Inorder:</strong> {{ traversals.inorder or "N/A" }}</p>
+        <p><strong>Preorder:</strong> {{ traversals.preorder or "N/A" }}</p>
+        <p><strong>Postorder:</strong> {{ traversals.postorder or "N/A" }}</p>
     </div>
 </div>
 {% endblock %}

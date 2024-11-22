@@ -1,10 +1,14 @@
-""" For this part since we are only sorting, and searching we will, not use a logs file, we will have a 
-    predetermined array, and we will import random to simply shuffle the logs
+""" 
+For this part since we are only sorting, and searching we will not use a logs file, we will have a 
+predetermined array, and we will import random to simply shuffle the logs.
 """
 import random
 
 class Sorting:
     def __init__(self):
+        """
+        Initializes the Sorting class with preset cybersecurity logs.
+        """
         # Preset cybersecurity logs
         self.logs = [
             "Unauthorized login attempt on WebApp1 (Alert: Username unknown)",
@@ -31,7 +35,15 @@ class Sorting:
         random.shuffle(self.logs)
         
     def quicksort(self, array):
-        """A normal quicksort code to order the logs"""
+        """
+        Perform quicksort on the given array.
+        
+        Parameters:
+        array (list): The list of logs to be sorted.
+        
+        Returns:
+        list: The sorted list of logs.
+        """
         if len(array) <= 1:
             return array
         else:
@@ -44,7 +56,13 @@ class Sorting:
     def binary_search(self, array, target):
         """
         Perform binary search on a sorted array.
-        Returns the index of the target if found, but if it does not find it will give a -1.
+        
+        Parameters:
+        array (list): The sorted list of logs.
+        target (str): The log entry to search for.
+        
+        Returns:
+        int: The index of the target if found, -1 otherwise.
         """
         left, right = 0, len(array) - 1
         while left <= right:
@@ -59,20 +77,28 @@ class Sorting:
 
     def get_logs(self):
         """
-        This will return the current state of the array, so we display in depending on what the user does.
+        Get the current state of the logs.
+        
+        Returns:
+        list: The current list of logs.
         """
         return self.logs
     
     def sort_logs(self):
         """
-        Use the quicksor to sort the logs.
+        Sort the logs using quicksort.
         """
         self.logs = self.quicksort(self.logs)
         
     def search_log(self, log_entry):
         """
         Search for a log entry in the sorted logs.
-        Returns the position if found, else indicates not found.
+        
+        Parameters:
+        log_entry (str): The log entry to search for.
+        
+        Returns:
+        int/str: The index of the log entry if found, or a message indicating it was not found.
         """
         sorted_logs = self.quicksort(self.logs)  # Ensure logs are sorted
         index = self.binary_search(sorted_logs, log_entry)

@@ -5,15 +5,38 @@ import os
 import json
 
 class Node:
-    """Define the head, tail of the doubly linked list"""
-    def __init__(self, data):
-        self.data = data
-        self.tail = None
-        self.head = None
+    """
+    A class representing a node in a doubly linked list.
 
+    Attributes:
+        data: The data stored in the node.
+        next: A reference to the next node in the list.
+        before: A reference to the previous node in the list.
+    """
+    def __init__(self, data):
+        """
+        Initializes a Node with the given data.
+        
+        Parameters:
+        data (any): The data to be stored in the node.
+        """
+        self.data = data
+        self.next = None
+        self.before = None
 
 class DoublyLinkedList:
+    """
+    A class representing a doubly linked list.
+
+    Attributes:
+        head: The head node of the doubly linked list.
+        tail: The tail node of the doubly linked list.
+        logs_path: The file path to store the doubly linked list logs.
+    """
     def __init__(self):
+        """
+        Initializes a DoublyLinkedList with no head and tail, and sets up the path for logs.
+        """
         self.head = None
         self.tail = None  # Track the tail of the list for efficient appending
         self.logs_path = os.path.join(os.path.dirname(__file__), '..', 'logs', 'double_linked_list_logs.json')
@@ -21,11 +44,13 @@ class DoublyLinkedList:
         
     def load_doubly_linked_list(self):
         """
-        Load logs from the json file, and get the content of the file to populate the list 
+        Load logs from the json file, and get the content of the file to populate the list.
         """
         if os.path.exists(self.logs_path):
             with open(self.logs_path, 'r') as logfile:
                 logs = json.load(logfile)
+                for log in logs:
+                    self.append(log)
                 
     def save_logs(self):
         """
@@ -37,8 +62,10 @@ class DoublyLinkedList:
             
     def append(self, data):
         """
-        Add a new node with the given data to the end of the list, we do the usual validation for a linked list
-        validating the head.
+        Add a new node with the given data to the end of the list.
+        
+        Parameters:
+        data (any): The data to be appended to the list.
         """
         new_node = Node(data)
         if self.head is None:
@@ -53,6 +80,13 @@ class DoublyLinkedList:
     def insert_at_index(self, index, data):
         """
         Insert a new node at a specific index.
+        
+        Parameters:
+        index (int): The position at which to insert the new node.
+        data (any): The data to be inserted into the new node.
+        
+        Returns:
+        bool: True if insertion is successful, False otherwise.
         """
         new_node = Node(data)
         if index == 0:
@@ -83,6 +117,12 @@ class DoublyLinkedList:
     def delete_at_index(self, index):
         """
         Delete a node at a specific index.
+        
+        Parameters:
+        index (int): The position of the node to be deleted.
+        
+        Returns:
+        bool: True if deletion is successful, False otherwise.
         """
         if self.head is None:
             return False
@@ -112,6 +152,13 @@ class DoublyLinkedList:
     def update_at_index(self, index, data):
         """
         Update the data at a specific index.
+        
+        Parameters:
+        index (int): The position of the node to be updated.
+        data (any): The new data to be stored in the node.
+        
+        Returns:
+        bool: True if update is successful, False otherwise.
         """
         current = self.head
         for _ in range(index):
@@ -127,6 +174,12 @@ class DoublyLinkedList:
     def get_log(self, index):
         """
         Access the data at a specific index.
+        
+        Parameters:
+        index (int): The position of the node to be accessed.
+        
+        Returns:
+        any: The data at the specified index if successful, None otherwise.
         """
         current = self.head
         for _ in range(index):
@@ -135,9 +188,26 @@ class DoublyLinkedList:
             current = current.next
         return current.data if current else None
     
+    def to_list(self):
+        """
+        Convert the doubly linked list into a Python list.
+
+        Returns:
+            list: A list containing the data of all nodes in the doubly linked list.
+        """
+        result = []
+        current = self.head
+        while current:
+            result.append(current.data)
+            current = current.next
+        return result
+    
     def to_list_with_pointers(self):
         """
-        Convert the list into a Python list, this is just to give the visual to the user of the head and the tail in the list.
+        Convert the list into a Python list, including pointers to head and tail.
+        
+        Returns:
+        list: A list of dictionaries representing the nodes with pointers to head and tail.
         """
         result = []
         current = self.head

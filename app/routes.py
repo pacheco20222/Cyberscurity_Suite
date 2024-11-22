@@ -32,6 +32,9 @@ def index():
 def array():
     """
     Route for handling array operations.
+    Operations include inserting, deleting, updating, and accessing elements in the array.
+    For deleting, and accessing we just use form to take the index from the user.
+    For inserting and updating we take the index and the element from the user.
     """
     current_array = array_object.current_array()
     if request.method == 'POST':
@@ -69,6 +72,7 @@ def array():
 def regenerate_array():
     """
     Route for regenerating the array logs.
+    This simply runs the script_array.py file to regenerate the logs, and realoads the array.
     """
     try:
         subprocess.run([sys.executable, 'app/scripts/script_array.py'], check=True)
@@ -82,6 +86,9 @@ def regenerate_array():
 def double_linked_list():
     """
     Route for handling doubly linked list operations.
+    Operations include inserting, deleting, updating, and accessing elements in the doubly linked list.
+    For deleting, and accessing we just use form to take the index from the user.
+    For inserting and updating we take the index and the element from the user.
     """
     current_doubly_linked_list = doubly_object.to_list_with_pointers()
     
@@ -91,26 +98,26 @@ def double_linked_list():
         
         if operation == 'insert':
             log = request.form.get('log')
-            if doubly_object.insert_at(int(index), log):
+            if doubly_object.insert_at_index(int(index), log):
                 flash(f"The {log}, was added successfully at index {index}", 'success')
             else:
                 flash('Error, check the index. Index may not be in the list, or check the log format', 'danger')
 
         elif operation == 'delete':
-            if doubly_object.delete_at(int(index)):
+            if doubly_object.delete_at_index(int(index)):
                 flash(f"The log at index {index} was successfully deleted", 'success')
             else:
                 flash('Error, check the index. Index may not be in the list', 'danger')
 
         elif operation == 'update':
             log = request.form.get('log')
-            if doubly_object.update_at(int(index), log):
+            if doubly_object.update_at_index(int(index), log):
                 flash(f"Log entry at index {index} updated to: {log}", 'success')
             else:
                 flash('Error, check the index. Index may not be in the list', 'danger')
 
         elif operation == 'access':
-            log = doubly_object.get_at(int(index))
+            log = doubly_object.get_log(int(index))
             if log:
                 flash(f"Log entry at index {index} is: {log}", 'success')
             else:
@@ -124,6 +131,7 @@ def double_linked_list():
 def regenerate_double_linked_list():
     """
     Route for regenerating the doubly linked list logs.
+    This simply runs the script_double_linked_list.py file to regenerate the logs, and realoads the doubly linked list.
     """
     try:
         subprocess.run([sys.executable, 'app/scripts/script_double_linked_list.py'], check=True)
@@ -137,6 +145,9 @@ def regenerate_double_linked_list():
 def queue():
     """
     Route for handling queue operations.
+    Operations for the queue include enqueuing and dequeuing logs.
+    We don't have to worry about the index in the queue, as it is a FIFO data structure.
+    We only take user input for the log to be enqueued.
     """
     if request.method == 'POST':
         log = request.form.get('enqueue_log')
@@ -152,6 +163,8 @@ def queue():
 def dequeue_queue():
     """
     Route for dequeuing an item from the queue.
+    This is a FIFO operation, so we just remove the first item in the queue.
+    We use POST since the page will be refreshed after the operation.
     """
     if queue_object.dequeue():
         flash('Log has been successfully removed from the queue.', 'success')
@@ -163,6 +176,7 @@ def dequeue_queue():
 def regenerate_queue():
     """
     Route for regenerating the queue logs.
+    This simply runs the script_queue.py file to regenerate the logs, and realoads the queue.
     """
     try:
         subprocess.run([sys.executable, 'app/scripts/script_queue.py'], check=True)
@@ -176,6 +190,8 @@ def regenerate_queue():
 def quicksort_binary_search():
     """
     Route for displaying the quicksort and binary search logs.
+    In this route, we display the logs, and provide options to sort the logs, shuffle them, and search for a log entry.
+    We actually don't have a json log files since we don't edit the file we just change the order, and sort it, so it has default logs
     """
     logs = sorting_instance.get_logs()
     return render_template('quicksort_binary_search.html', logs=logs)
@@ -218,6 +234,8 @@ def search_log():
 def stack():
     """
     Route for handling stack operations.
+    Operations for the stack include pushing and popping logs.
+    We only take user input for the log to be pushed.
     """
     if request.method == 'POST':
         push_log = request.form.get('push_log')
@@ -233,6 +251,7 @@ def stack():
 def pop_stack():
     """
     Route for popping an item from the stack.
+    This is a POST methods since the page will be refresh asfter the operation
     """
     if stack_object.pop():
         flash('Log has been successfully popped from the stack.', 'success')
@@ -244,6 +263,7 @@ def pop_stack():
 def regenerate_stack():
     """
     Route for regenerating the stack logs.
+    This simply runs the script_stack.py file to regenerate the logs, and realoads the stack.
     """
     try:
         subprocess.run([sys.executable, 'app/scripts/script_stack.py'], check=True)
@@ -257,47 +277,69 @@ def regenerate_stack():
 def binary_tree():
     """
     Route for handling binary tree operations and displaying the tree structure graphically.
+    Operations include inserting, deleting, and searching for logs in the tree.
+    It will display a binary tree image, and each change we make to it, the image will be realoaded.
     """
+    traversals = {"inorder": None, "preorder": None, "postorder": None}
+
     if request.method == 'POST':
         operation = request.form.get('operation')
         value = request.form.get('value')
         
-        if not value:
-            flash("Please enter a log entry value", 'danger')
-            return redirect(url_for('main.binary_tree'))
-        
-        try:
-            if operation == 'insert':
-                binary_tree_instance.insert(value)
-                flash(f"Log '{value}' has been inserted into the tree.", 'success')
-            elif operation == 'delete':
-                if binary_tree_instance.delete(value):
-                    flash(f"Log '{value}' has been deleted from the tree.", 'success')
-                else:
-                    flash(f"Log '{value}' not found in the tree for deletion.", 'danger')
-            elif operation == 'search':
-                position = binary_tree_instance.search(value)
-                if position != -1:
-                    flash(f"Log '{value}' was found in the tree at position {position}.", 'success')
-                else:
-                    flash(f"Log '{value}' not found in the tree.", 'danger')
-        except Exception as e:
-            flash(f"An error occurred: {e}", 'danger')
-        
-        # After the operation, regenerate the tree image
-        binary_tree_instance.generate_tree_image()
+        if operation in ["inorder", "preorder", "postorder"]:
+            if operation == "inorder":
+                traversals["inorder"] = binary_tree_instance.inorder()
+            elif operation == "preorder":
+                traversals["preorder"] = binary_tree_instance.preorder()
+            elif operation == "postorder":
+                traversals["postorder"] = binary_tree_instance.postorder()
+
+            # Pass traversals directly to the template
+            return render_template(
+                'binary_tree.html',
+                tree_image=url_for('static', filename='img/binary_tree.png'),
+                traversals=traversals
+            )
+        else:
+            if not value:
+                flash("Please enter a log entry value", 'danger')
+                return redirect(url_for('main.binary_tree'))
+            
+            try:
+                if operation == 'insert':
+                    binary_tree_instance.insert(value)
+                    flash(f"Log '{value}' has been inserted into the tree.", 'success')
+                elif operation == 'delete':
+                    if binary_tree_instance.delete(value):
+                        flash(f"Log '{value}' has been deleted from the tree.", 'success')
+                    else:
+                        flash(f"Log '{value}' not found in the tree for deletion.", 'danger')
+                elif operation == 'search':
+                    position = binary_tree_instance.search(value)
+                    if position != -1:
+                        flash(f"Log '{value}' was found in the tree at position {position}.", 'success')
+                    else:
+                        flash(f"Log '{value}' not found in the tree.", 'danger')
+            except Exception as e:
+                flash(f"An error occurred: {e}", 'danger')
+            
+            # After the operation, regenerate the tree image
+            binary_tree_instance.generate_tree_image()
         return redirect(url_for('main.binary_tree'))
 
     # Display the tree structure (image) on GET requests
     return render_template(
         'binary_tree.html',
-        tree_image=url_for('static', filename='img/binary_tree.png')
+        tree_image=url_for('static', filename='img/binary_tree.png'),
+        traversals=traversals
     )
+
     
 @main.route('/binary_tree/regenerate', methods=['POST'])
 def regenerate_binary_tree():
     """
     Route for regenerating the binary tree logs.
+    This simply runs the script_binary_tree.py file to regenerate the logs, and realoads the binary tree.
     """
     try:
         subprocess.run([sys.executable, 'app/scripts/script_binary_tree.py'], check=True)
@@ -311,6 +353,7 @@ def regenerate_binary_tree():
 def graph():
     """
     Route for handling graph operations such as adding nodes, edges, and calculating the MST using Kruskal's algorithm.
+    Operations include adding nodes, adding edges, and generating the Minimum Spanning Tree (MST) using Kruskal's algorithm.
     """
     mst_edges = []
     message = ""

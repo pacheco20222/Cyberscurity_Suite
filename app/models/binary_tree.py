@@ -23,6 +23,9 @@ class TreeNode:
     def __init__(self, data):
         """
         Initializes a TreeNode with the given data.
+        
+        Parameters:
+        data (any): The data to be stored in the node.
         """
         self.data = data
         self.left = None
@@ -71,7 +74,9 @@ class BinaryTree:
     def build_tree(self, data_list):
         """
         Constructs a complete binary tree from a list of data.
-        the function takes the data_list, which will help to build the binary tree
+        
+        Parameters:
+        data_list (list): The list of data to build the binary tree.
         """
         if not data_list:
             return
@@ -122,7 +127,9 @@ class BinaryTree:
     def insert(self, data):
         """
         Inserts a new node to maintain a complete binary tree.
-        Data will be taken and put in the binary tree, which is the argument
+        
+        Parameters:
+        data (any): The data to be inserted into the binary tree.
         """
         if not self.root:
             self.root = TreeNode(data)
@@ -149,8 +156,12 @@ class BinaryTree:
     def delete(self, data):
         """
         Deletes a node by replacing it with the deepest and rightmost node.
-        the argument it tales is the data of the node to be deleted, and 
-        it will go ahead and return true when the node is deleted, and false if it was not successful
+        
+        Parameters:
+        data (any): The data of the node to be deleted.
+        
+        Returns:
+        bool: True if deletion is successful, False otherwise.
         """
         if not self.root:
             flash("Tree is empty. Cannot delete.", "danger")
@@ -191,6 +202,87 @@ class BinaryTree:
         else:
             flash(f"Log '{data}' not found in the tree for deletion.", "danger")
             return False
+        
+    def inorder(self):
+        """
+        Returns an inorder traversal of the binary tree as a list.
+        
+        Returns:
+        list: The list of node values in inorder sequence.
+        """
+        result = []
+        self._inorder_recursive(self.root, result)
+        return result
+    
+    def _inorder_recursive(self, node, result):
+        """ 
+        Perform an in-order traversal of the binary tree recursively.
+        
+        Args:
+            node (TreeNode): The current node in the binary tree.
+            result (list): The list that accumulates the node values in in-order sequence.
+        
+        Returns:
+            None: This method updates the result list in place.
+        """
+        if node:
+            self._inorder_recursive(node.left, result)
+            result.append(node.data)
+            self._inorder_recursive(node.right, result)
+            
+    def preorder(self):
+        """
+        Returns a preorder traversal of the binary tree as a list.
+        
+        Returns:
+        list: The list of node values in preorder sequence.
+        """
+        result = []
+        self._preorder_recursive(self.root, result)
+        return result
+    
+    def _preorder_recursive(self, node, result):
+        """ 
+        Perform a pre-order traversal of the binary tree recursively.
+        
+        Args:
+            node (TreeNode): The current node in the binary tree.
+            result (list): The list that accumulates the node values in pre-order sequence.
+        
+        Returns:
+            None: This method updates the result list in place.
+        """
+        if node:
+            result.append(node.data)
+            self._preorder_recursive(node.left, result)
+            self._preorder_recursive(node.right, result)
+            
+    def postorder(self):
+        """
+        Returns a postorder traversal of the binary tree as a list.
+        
+        Returns:
+        list: The list of node values in postorder sequence.
+        """
+        result = []
+        self._postorder_recursive(self.root, result)
+        return result
+    
+    def _postorder_recursive(self, node, result):
+        """ 
+        Perform a post-order traversal of the binary tree recursively.
+        
+        Args:
+            node (TreeNode): The current node in the binary tree.
+            result (list): The list that accumulates the node values in post-order sequence.
+        
+        Returns:
+            None: This method updates the result list in place.
+        """
+        if node:
+            self._postorder_recursive(node.left, result)
+            self._postorder_recursive(node.right, result)
+            result.append(node.data)
 
     def generate_tree_image(self):
         """
@@ -206,9 +298,11 @@ class BinaryTree:
     def _add_nodes_to_graph(self, node, graph, parent_label=None):
         """
         Recursively adds nodes to the graph for visualization.
-        It takes arguments, such as the node, the node will be added to the graph, 
-        which the graph is done with the ibrary pydot.
-        Also the parent_label, is the label of the parent node
+        
+        Parameters:
+        node (TreeNode): The current node in the binary tree.
+        graph (pydot.Dot): The graph object to which nodes are added.
+        parent_label (str): The label of the parent node.
         """
         if node:
             current_label = str(node.data)
